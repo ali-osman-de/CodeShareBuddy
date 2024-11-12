@@ -1,5 +1,5 @@
 import React from "react";
-import illustration from "./illustration.jpg"; // Import the local image
+import illustration from "../../assets/illustration.jpg"; // Import the local image
 import {
   Button,
   Card,
