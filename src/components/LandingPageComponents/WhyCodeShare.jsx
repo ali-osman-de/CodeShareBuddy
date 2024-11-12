@@ -8,7 +8,7 @@ const WhyCodeShare = () => {
         <div className='m-5'>
             <h1 className='fw-bold fs-4'>Why Code Share?</h1>
             <div className='d-flex justify-content-between'>
-                <Card
+                {/* <Card
                     className='my-4'
                     style={{
                         width: '18rem'
@@ -27,7 +27,7 @@ const WhyCodeShare = () => {
                             Lorem ipsum dolor sit amet.
                         </CardSubtitle>
                     </CardBody>
-                </Card>
+                </Card> */}
                 <Card
                     className='my-4'
                     style={{

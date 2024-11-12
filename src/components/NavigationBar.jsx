@@ -4,11 +4,11 @@ import { Button, Navbar, NavbarBrand } from 'reactstrap'
 function NavigationBar() {
   return (
     <Navbar
-      className="border"
+      className="border rounded-pill my-3"
       color="white"
       light
     >
-      <NavbarBrand href="/" className='my-2'>
+      <NavbarBrand href="/" className='my-2 mx-3'>
         <img
           alt="logo"
           src="/vite.svg"
