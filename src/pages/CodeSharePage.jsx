@@ -1,6 +1,6 @@
 import React from 'react'
 
-function CodeSharePage() {
+const CodeSharePage = () => {
   return (
     <div>CodeSharePage</div>
   )
