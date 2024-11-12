@@ -1,0 +1,18 @@
+.mx-5 {
+    max-width: 100%; /* Ensures the container takes full width */
+  }
+  
+  .cardImage {
+    object-fit: cover; /* Ensures the image covers the entire div */
+    height: 100%; /* Full height */
+    width: 100%; /* Full width */
+  }
+  
+  .formCoordinats {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 20px;
+    height: 100%;
+  }
+  
