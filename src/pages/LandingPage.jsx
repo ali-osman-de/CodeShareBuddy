@@ -1,6 +1,6 @@
 import React from 'react'
 
-function LandingPage() {
+const LandingPage = () => {
   return (
     <div>LandingPage</div>
   )
