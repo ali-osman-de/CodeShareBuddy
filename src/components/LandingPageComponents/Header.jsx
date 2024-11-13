@@ -1,5 +1,5 @@
 import React from "react";
-import illustration from "../../assets/illustration.jpg"; // Import the local image
+import illustration from "../../assets/illustration.png"; // Import the local image
 import {
   Button,
   Card,
@@ -27,8 +27,8 @@ const Header = () => {
           }}
         />
         <CardImgOverlay className="formCoordinats">
-          <Form>
-            <Row className="row-cols-lg-auto g-3 align-items-center ">
+          <Form className="p-3 rounded-4 shadow-lg" style={{ backgroundColor: "#edf6f9" }}>
+            <Row className="row-cols-lg-auto g-3 align-items-center">
               <Col>
                 <Label className="visually-hidden" for="exampleEmail">
                   Email
@@ -37,12 +37,12 @@ const Header = () => {
                   style={{ boxShadow: "none", border: "none" }}
                   id="exampleEmail"
                   name="email"
-                  placeholder="something@idk.cool"
+                  placeholder="example@gmail.com"
                   type="email"
                 />
               </Col>
               <Col>
-                <Button color="primary">Submit</Button>
+                <Button className="px-3" style={{ backgroundColor: "#3a86ff", border: "none" }}>Register!</Button>
               </Col>
             </Row>
           </Form>
