@@ -8,7 +8,7 @@ function NavigationBar() {
       color="white"
       light
     >
-      <NavbarBrand href="/" className='my-2 mx-3'>
+      <NavbarBrand href="/" className='my-2 mx-3 fw-normal text-muted'>
         <img
           alt="logo"
           src="/vite.svg"
@@ -16,8 +16,9 @@ function NavigationBar() {
             height: 30,
             width: 30
           }}
+          className='mx-2'
         />
-        Reactstrap
+        CodeShareBuddy
       </NavbarBrand>
       <NavbarBrand href="/" className=' my-2'>
         <Button className='rounded-3 px-4 fw-bold' color='primary' style={{ opacity: "90%" }}>Sign In</Button>
