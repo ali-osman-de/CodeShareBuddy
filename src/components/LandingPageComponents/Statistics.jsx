@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card, CardBody, CardSubtitle, CardTitle } from 'reactstrap'
-import { MdOutlineCastForEducation } from "react-icons/md";
 import { FaDev } from "react-icons/fa";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { PiNotificationLight } from "react-icons/pi";
