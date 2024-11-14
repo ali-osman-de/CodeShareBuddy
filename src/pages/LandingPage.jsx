@@ -3,6 +3,7 @@ import { Col, Container, Row } from 'reactstrap'
 import NavigationBar from '../components/NavigationBar'
 import Header from '../components/LandingPageComponents/Header'
 import WhyCodeShare from '../components/LandingPageComponents/WhyCodeShare'
+import Statistics from '../components/LandingPageComponents/Statistics'
 
 const LandingPage = () => {
   return (
@@ -19,6 +20,9 @@ const LandingPage = () => {
         </Col>
       </Row>
       <Row>
+        <Col xs="12" >
+          <Statistics />
+        </Col>
       </Row>
     </Container>
 
