@@ -4,6 +4,8 @@ import NavigationBar from '../components/NavigationBar'
 import Header from '../components/LandingPageComponents/Header'
 import WhyCodeShare from '../components/LandingPageComponents/WhyCodeShare'
 import Statistics from '../components/LandingPageComponents/Statistics'
+import FeaturedProject from '../components/LandingPageComponents/FeaturedProject'
+import FooterSection from "../components/FooterSection"
 
 const LandingPage = () => {
   return (
@@ -21,9 +23,16 @@ const LandingPage = () => {
       </Row>
       <Row>
         <Col xs="12" >
+          <FeaturedProject />
+
+        </Col>
+      </Row>
+      <Row>
+        <Col xs="12" >
           <Statistics />
         </Col>
       </Row>
+      <FooterSection />
     </Container>
 
   )
