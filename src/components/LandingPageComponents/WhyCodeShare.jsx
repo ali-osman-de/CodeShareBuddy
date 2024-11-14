@@ -5,7 +5,7 @@ import { MdOutlineCastForEducation } from "react-icons/md";
 
 const WhyCodeShare = () => {
     return (
-        <div className='m-5'>
+        <div className='mx-5 mt-5'>
             <h1 className='fw-bold fs-4'>Why Code Share?</h1>
             <div className='d-flex justify-content-between'>
                 {/* <Card
