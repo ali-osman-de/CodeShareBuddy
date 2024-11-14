@@ -9,7 +9,7 @@ import { GoCommentDiscussion } from "react-icons/go";
 
 const Statistics = () => {
     return (
-        <div className='mx-5'>
+        <div className='mx-5 my-5'>
             <h1 className='fw-bold fs-4'>Statistics</h1>
             <div className='d-flex justify-content-between'>
                 {/* <Card
