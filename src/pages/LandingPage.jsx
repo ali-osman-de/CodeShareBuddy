@@ -11,7 +11,7 @@ const LandingPage = () => {
   return (
     <Container>
       <NavigationBar />
-      <Row>
+      <Row className='mt-3'>
         <Col xs="12" className='d-flex justify-content-center'>
           <Header />
         </Col>
