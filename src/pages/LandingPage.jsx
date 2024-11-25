@@ -16,7 +16,7 @@ const LandingPage = () => {
           <Header />
         </Col>
       </Row>
-      <Row>
+      <Row className='mt-3'>
         <Col xs="12" className='my-5'>
           <WhyCodeShare />
         </Col>

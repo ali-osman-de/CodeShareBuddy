@@ -29,7 +29,7 @@ const WhyCodeShare = () => {
                     </CardBody>
                 </Card> */}
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
@@ -49,7 +49,7 @@ const WhyCodeShare = () => {
                     </CardBody>
                 </Card>
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
@@ -69,7 +69,7 @@ const WhyCodeShare = () => {
                     </CardBody>
                 </Card>
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
@@ -89,7 +89,7 @@ const WhyCodeShare = () => {
                     </CardBody>
                 </Card>
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
