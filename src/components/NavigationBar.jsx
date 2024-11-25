@@ -4,7 +4,7 @@ import { Button, Navbar, NavbarBrand } from 'reactstrap'
 function NavigationBar() {
   return (
     <Navbar
-      className="border rounded-pill my-3"
+      className="border rounded-pill my-3 shadow-sm"
       color="white"
       light
     >

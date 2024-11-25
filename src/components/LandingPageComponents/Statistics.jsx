@@ -33,7 +33,7 @@ const Statistics = () => {
                     </CardBody>
                 </Card> */}
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
@@ -53,7 +53,7 @@ const Statistics = () => {
                     </CardBody>
                 </Card>
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
@@ -73,7 +73,7 @@ const Statistics = () => {
                     </CardBody>
                 </Card>
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
@@ -93,7 +93,7 @@ const Statistics = () => {
                     </CardBody>
                 </Card>
                 <Card
-                    className='my-4'
+                    className='my-4 shadow'
                     style={{
                         width: '18rem'
                     }}
