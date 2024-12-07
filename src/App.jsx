@@ -2,11 +2,12 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
+import LoginPage from "./pages/LoginPage"
 import ProfilePage from './pages/ProfilePage'
 
 
 const PrivateRoute = ({ children }) => {
-  const isAuthenticated = false
+  const isAuthenticated = true
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />
@@ -21,6 +22,7 @@ const App = () => {
       <Routes>
 
         <Route path="/" element={<LandingPage />} />
+        <Route path="/sign-in" element={<LoginPage />} />
 
         <Route
           path="/home"

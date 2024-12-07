@@ -1,5 +1,5 @@
 import React from "react";
-import illustration from "../../assets/illustration.png"; // Import the local image
+import illustration from "../../assets/illustration.png";
 import {
   Button,
   Card,
@@ -12,8 +12,11 @@ import {
   Row,
 } from "reactstrap";
 import "./Header.css";
+import { useNavigate } from 'react-router-dom'
 
 const Header = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="mx-5">
       <Card inverse style={{ border: "none", height: "500px" }}>
@@ -42,7 +45,11 @@ const Header = () => {
                 />
               </Col>
               <Col>
-                <Button className="px-3" style={{ backgroundColor: "#3a86ff", border: "none" }}>Register!</Button>
+                <Button
+                  className="px-3"
+                  style={{ backgroundColor: "#3a86ff", border: "none" }}
+                  onClick={() => navigate('/sign-in', { state: { isSignUp: true } })}
+                >Register!</Button>
               </Col>
             </Row>
           </Form>
