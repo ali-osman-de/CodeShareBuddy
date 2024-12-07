@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Row, Col } from 'reactstrap'
-import HomePageSideBar from '../components/HomePageComponents/HomePageSideBar'
+import SideMenu from '../components/SideMenu'
 import HomePageContents from '../components/HomePageComponents/HomePageContents'
 
 const HomePage = () => {
@@ -8,7 +8,7 @@ const HomePage = () => {
     <Container>
       <Row className='mt-5'>
         <Col xs="3">
-          <HomePageSideBar />
+          <SideMenu />
         </Col>
         <Col xs="9">
           <Row>
