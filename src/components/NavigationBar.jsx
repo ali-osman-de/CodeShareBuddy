@@ -11,9 +11,9 @@ function NavigationBar() {
       color="white"
       light
     >
-      <NavbarBrand 
-        role="button" 
-        onClick={() => navigate('/')} 
+      <NavbarBrand
+        role="button"
+        onClick={() => navigate('/')}
         className='my-2 mx-3 fw-normal text-muted'
       >
         <img
@@ -28,18 +28,19 @@ function NavigationBar() {
         CodeShareBuddy
       </NavbarBrand>
       <NavbarBrand className='my-2'>
-        <Button 
-          onClick={() => navigate('/home')}
-          className='rounded-3 px-4 fw-bold' 
-          color='primary' 
+        <Button
+          onClick={() => navigate('/sign-in')}
+          className='rounded-3 px-4 fw-bold'
+          color='primary'
           style={{ opacity: "90%" }}
         >
           Sign In
         </Button>
-        <Button 
-          className='rounded-3 mx-2 px-4 fw-bold' 
-          color='secondary' 
+        <Button
+          className='rounded-3 mx-2 px-4 fw-bold'
+          color='secondary'
           style={{ opacity: "50%" }}
+          onClick={() => navigate('/sign-in', { state: { isSignUp: true } })}
         >
           Register
         </Button>
