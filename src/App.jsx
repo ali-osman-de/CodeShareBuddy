@@ -1,10 +1,12 @@
-import LandingPage from "./pages/LandingPage"
+import Login from "./components/LoginPageComponents/Login"
+
 
 function App() {
 
   return (
     <>
-      <LandingPage />
+      <Login />
+
     </>
   )
 }
