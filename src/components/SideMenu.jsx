@@ -3,7 +3,7 @@ import { ListGroup, ListGroupItem } from 'reactstrap'
 import { IoHomeOutline, IoSearch, IoAdd, IoNotifications, IoPerson } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom'
 
-const ProfileSideMenu = () => {
+const SideMenu = () => {
     const navigate = useNavigate()
 
     return (
@@ -52,4 +52,4 @@ const ProfileSideMenu = () => {
     )
 }
 
-export default ProfileSideMenu
+export default SideMenu
