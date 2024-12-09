@@ -3,6 +3,7 @@ import { Col, Container, Row } from 'reactstrap'
 import ProfileHeader from '../components/ProfilePageComponents/ProfileHeader'
 import SideMenu from '../components/SideMenu'
 import ProfileContents from '../components/ProfilePageComponents/ProfileContents'
+
 const ProfilePage = () => {
   return (
     <Container>
@@ -14,7 +15,7 @@ const ProfilePage = () => {
           <ProfileHeader />
           <Row>
             <Col xs="12">
-          <ProfileContents />
+              <ProfileContents />
             </Col>
           </Row>
         </Col>
