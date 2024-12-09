@@ -1,8 +1,9 @@
 import React from 'react'
 import { Col, Container, Row } from 'reactstrap'
 import SideMenu from '../components/SideMenu'
+import ExplorePageContents from '../components/CreatePageComponents/ExplorePageContents'
 
-const CreatePage = () => {
+const ExplorePage = () => {
     return (
         <Container>
             <Row className='mt-5'>
@@ -10,11 +11,11 @@ const CreatePage = () => {
                     <SideMenu />
                 </Col>
                 <Col xs="9">
-                
+                    <ExplorePageContents />
                 </Col>
             </Row>
         </Container>
     )
 }
 
-export default CreatePage
+export default ExplorePage

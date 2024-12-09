@@ -4,7 +4,8 @@ import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
 import LoginPage from "./pages/LoginPage"
 import ProfilePage from './pages/ProfilePage'
-
+import CreatePage from './pages/ExplorePage'
+import ExplorePage from './pages/ExplorePage'
 
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = true
@@ -37,6 +38,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/explore"
+          element={
+            <PrivateRoute>
+              <ExplorePage />
             </PrivateRoute>
           }
         />
