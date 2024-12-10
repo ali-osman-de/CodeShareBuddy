@@ -1,10 +1,13 @@
 import React from 'react'
 import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Row, Col } from 'reactstrap'
+import { useNavigate } from 'react-router-dom'
 
 const SharedCodes = () => {
+    const navigate = useNavigate();
+
     return (
         <>
-            <Card className='border-0 mt-4'>
+            <Card className='border-0 mt-4' onClick={() => navigate('/content')}>
                 <Row className="align-items-center">
                     <Col xs="8">
                         <CardBody>
