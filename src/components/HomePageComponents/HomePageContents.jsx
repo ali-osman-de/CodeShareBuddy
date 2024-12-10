@@ -1,13 +1,16 @@
 import React from 'react'
 import { Card, CardBody, CardTitle, CardSubtitle, CardText, Row, Col, Button } from 'reactstrap'
+import { useNavigate } from 'react-router-dom'
 
 const HomePageContents = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3 className="mb-0">Home</h3>
       </div>
-      <Card className="mb-5 border-0">
+      <Card className="mb-5 border-0" onClick={() => navigate('/content')}>
         <Row className="d-flex align-items-start">
           <Col md="6">
             <img
@@ -30,7 +33,7 @@ const HomePageContents = () => {
           </Col>
         </Row>
       </Card>
-      <Card className="mb-5 border-0">
+      <Card className="mb-5 border-0" onClick={() => navigate('/content')}>
         <Row className="d-flex align-items-start">
           <Col md="6">
             <img
@@ -53,7 +56,7 @@ const HomePageContents = () => {
           </Col>
         </Row>
       </Card>
-      <Card className="mb-5 border-0">
+      <Card className="mb-5 border-0" onClick={() => navigate('/content')}>
         <Row className="d-flex align-items-start">
           <Col md="6">
             <img
@@ -76,7 +79,7 @@ const HomePageContents = () => {
           </Col>
         </Row>
       </Card>
-      <Card className="mb-5 border-0">
+      <Card className="mb-5 border-0" onClick={() => navigate('/content')}>
         <Row className="d-flex align-items-start">
           <Col md="6">
             <img

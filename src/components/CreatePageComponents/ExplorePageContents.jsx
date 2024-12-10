@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Input } from 'reactstrap'
+import { useNavigate } from 'react-router-dom'
 
 const ExplorePageContents = () => {
     const [hoveredCard, setHoveredCard] = useState(null)
+    const navigate = useNavigate()
 
     return (
         <Row>
@@ -22,7 +24,8 @@ const ExplorePageContents = () => {
                 <Col xs="9">
                     <Card className="position-relative h-100"
                         onMouseEnter={() => setHoveredCard(1)}
-                        onMouseLeave={() => setHoveredCard(null)}>
+                        onMouseLeave={() => setHoveredCard(null)}
+                        onClick={() => navigate('/content')}>
                         <CardImg
                             top
                             width="100%"
@@ -50,7 +53,8 @@ const ExplorePageContents = () => {
                         <Col xs="12" className="mb-3">
                             <Card className="position-relative"
                                 onMouseEnter={() => setHoveredCard(2)}
-                                onMouseLeave={() => setHoveredCard(null)}>
+                                onMouseLeave={() => setHoveredCard(null)}
+                                onClick={() => navigate('/content')}>
                                 <CardImg
                                     top
                                     width="100%"
@@ -76,7 +80,8 @@ const ExplorePageContents = () => {
                         <Col xs="12" className="mb-3">
                             <Card className="position-relative"
                                 onMouseEnter={() => setHoveredCard(3)}
-                                onMouseLeave={() => setHoveredCard(null)}>
+                                onMouseLeave={() => setHoveredCard(null)}
+                                onClick={() => navigate('/content')}>
                                 <CardImg
                                     top
                                     width="100%"
@@ -102,7 +107,8 @@ const ExplorePageContents = () => {
                         <Col xs="12">
                             <Card className="position-relative"
                                 onMouseEnter={() => setHoveredCard(4)}
-                                onMouseLeave={() => setHoveredCard(null)}>
+                                onMouseLeave={() => setHoveredCard(null)}
+                                onClick={() => navigate('/content')}>
                                 <CardImg
                                     top
                                     width="100%"
@@ -135,7 +141,8 @@ const ExplorePageContents = () => {
                     <Col xs="4" key={cardId} className="mb-4">
                         <Card className="position-relative"
                             onMouseEnter={() => setHoveredCard(cardId)}
-                            onMouseLeave={() => setHoveredCard(null)}>
+                            onMouseLeave={() => setHoveredCard(null)}
+                            onClick={() => navigate('/content')}>
                             <CardImg
                                 top
                                 width="100%"
@@ -166,7 +173,8 @@ const ExplorePageContents = () => {
                     <Col xs="4" key={cardId} className="mb-4">
                         <Card className="position-relative"
                             onMouseEnter={() => setHoveredCard(cardId)}
-                            onMouseLeave={() => setHoveredCard(null)}>
+                            onMouseLeave={() => setHoveredCard(null)}
+                            onClick={() => navigate('/content')}>
                             <CardImg
                                 top
                                 width="100%"
@@ -197,7 +205,8 @@ const ExplorePageContents = () => {
                     <Col xs="4" key={cardId} className="mb-4">
                         <Card className="position-relative"
                             onMouseEnter={() => setHoveredCard(cardId)}
-                            onMouseLeave={() => setHoveredCard(null)}>
+                            onMouseLeave={() => setHoveredCard(null)}
+                            onClick={() => navigate('/content')}>
                             <CardImg
                                 top
                                 width="100%"
