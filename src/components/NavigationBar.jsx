@@ -29,7 +29,7 @@ function NavigationBar() {
       </NavbarBrand>
       <NavbarBrand className='my-2'>
         <Button
-          onClick={() => navigate('/sign-in')}
+          onClick={() => navigate('/login')}
           className='rounded-3 px-4 fw-bold'
           color='primary'
           style={{ opacity: "90%" }}
@@ -40,7 +40,7 @@ function NavigationBar() {
           className='rounded-3 mx-2 px-4 fw-bold'
           color='secondary'
           style={{ opacity: "50%" }}
-          onClick={() => navigate('/sign-in', { state: { isSignUp: true } })}
+          onClick={() => navigate('/signup', { state: { isSignUp: true } })}
         >
           Register
         </Button>
