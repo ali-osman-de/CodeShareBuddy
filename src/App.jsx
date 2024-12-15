@@ -25,7 +25,9 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/sign-in" element={<LoginPage />} />
+          {/* <Route path="/sign-in" element={<LoginPage />} /> */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<LoginPage />} />
           <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
           <Route path="/explore" element={<PrivateRoute><ExplorePage /></PrivateRoute>} />

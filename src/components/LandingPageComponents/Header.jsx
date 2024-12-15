@@ -48,7 +48,7 @@ const Header = () => {
                 <Button
                   className="px-3"
                   style={{ backgroundColor: "#3a86ff", border: "none" }}
-                  onClick={() => navigate('/sign-in', { state: { isSignUp: true } })}
+                  onClick={() => navigate('/signup', { state: { isSignUp: true } })}
                 >Register!</Button>
               </Col>
             </Row>
