@@ -7,7 +7,7 @@ const ProfileHeader = () => {
 
       <div className='d-flex flex-column align-items-center'>
         <img
-          class="bd-placeholder-img rounded-circle" width="140" height="140"
+          className="bd-placeholder-img rounded-circle" width="140" height="140"
           alt="ProfilePicture"
           src="https://picsum.photos/300/200"
         />
