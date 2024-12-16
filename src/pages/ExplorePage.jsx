@@ -1,7 +1,7 @@
 import React from 'react'
 import { Col, Container, Row } from 'reactstrap'
 import SideMenu from '../components/SideMenu'
-import ExplorePageContents from '../components/CreatePageComponents/ExplorePageContents'
+import ExplorePageContents from '../components/ExplorePageComponents/ExplorePageContents'
 
 const ExplorePage = () => {
     return (

@@ -26,7 +26,7 @@ const SideMenu = () => {
         </ListGroupItem>
         <ListGroupItem
           action
-          onClick={() => navigate('/create')}
+          onClick={() => navigate('/create-new-content')}
           tag="a"
           className='d-flex align-items-center fs-6 fw-normal rounded-3 border-0'
         >

@@ -8,6 +8,8 @@ import LoginPage from "./pages/LoginPage"
 import ProfilePage from './pages/ProfilePage'
 import ExplorePage from './pages/ExplorePage'
 import ContentPage from './pages/ContentPage'
+import CreateProjectPage from './pages/CreateProjectPage'
+
 
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
@@ -30,6 +32,7 @@ const App = () => {
           <Route path="/signup" element={<LoginPage />} />
           <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+          <Route path="/create-new-content" element={<PrivateRoute><CreateProjectPage /></PrivateRoute>} />
           <Route path="/explore" element={<PrivateRoute><ExplorePage /></PrivateRoute>} />
           <Route path="/content" element={<PrivateRoute><ContentPage /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
