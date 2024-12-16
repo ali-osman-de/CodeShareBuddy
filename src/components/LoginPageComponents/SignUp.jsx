@@ -33,7 +33,7 @@ const SignUp = () => {
         try {
             setLoadingToastVisible(true);
 
-            const user = await RegisterUser(auth, formData.email, formData.password);
+            const user = await RegisterUser(auth, formData.email, formData.password, formData.fullName);
 
             dispatch(login({
                 uid: user.uid,

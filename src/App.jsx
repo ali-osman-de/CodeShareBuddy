@@ -11,15 +11,23 @@ import ContentPage from './pages/ContentPage'
 import CreateProjectPage from './pages/CreateProjectPage'
 
 
-const PrivateRoute = ({ children }) => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
 
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />
+const PrivateRoute = ({ children }) => {
+  const { isAuthenticated, expirationTime, accessToken } = useSelector(
+    (state) => state.auth
+  );
+
+  const isTokenExpired = expirationTime
+    ? new Date().getTime() > new Date(expirationTime).getTime()
+    : true;
+
+  if (!isAuthenticated || !accessToken || isTokenExpired) {
+    return <Navigate to="/login" replace />;
   }
 
-  return children
-}
+  return children;
+};
+
 
 const App = () => {
   return (

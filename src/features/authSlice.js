@@ -3,17 +3,27 @@ import { createSlice } from "@reduxjs/toolkit";
 const authSlice = createSlice({
   name: "auth",
   initialState: {
+    displayName: "",
+    accessToken: "",
+    expirationTime: null,
     isAuthenticated: false,
-    user: null,
+    user: null, 
   },
   reducers: {
-    login: (state, action) => {
+    login(state, action) {
+      const { user, accessToken, expirationTime, displayName } = action.payload;
       state.isAuthenticated = true;
-      state.user = action.payload; 
+      state.user = user; 
+      state.accessToken = accessToken;
+      state.expirationTime = expirationTime;
+      state.displayName = displayName;
     },
-    logout: (state) => {
+    logout(state) {
       state.isAuthenticated = false;
       state.user = null;
+      state.accessToken = "";
+      state.expirationTime = null;
+      state.displayName = "";
     },
   },
 });
