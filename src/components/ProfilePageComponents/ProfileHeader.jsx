@@ -1,7 +1,10 @@
 import React from 'react'
-import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle } from 'reactstrap'
+import { Button, Card, CardBody, CardSubtitle, CardTitle } from 'reactstrap'
+import { useSelector } from 'react-redux'
 
 const ProfileHeader = () => {
+  const { displayName } = useSelector((state) => state.auth);
+
   return (
     <div className='d-flex justify-content-center'>
 
@@ -18,8 +21,8 @@ const ProfileHeader = () => {
           }}
         >
           <CardBody className='text-center'>
-            <CardTitle className=' fs-3 fw-semibold '>
-              Jenny
+            <CardTitle className='fs-3 fw-semibold'>
+              {displayName}
             </CardTitle>
             <CardSubtitle
               className="mb-2 fs-6 fw-light text-muted"
@@ -27,7 +30,7 @@ const ProfileHeader = () => {
             >
               Female, Age 30
             </CardSubtitle>
-            <div className='d-flex mx-auto gap-3 mt-3'>
+            <div className='mx-auto gap-3 mt-3'>
               <Button className='bg-light text-dark border-0 fs-6 fw-light'>Edit Profile</Button>
               <Button className='bg-dark text-white border-0 fs-6 fw-light'>Save</Button>
             </div>

@@ -30,7 +30,10 @@ const Login = () => {
 
       dispatch(login({
         uid: user.uid,
+        accessToken: user.stsTokenManager.accessToken,
+        expirationTime: user.stsTokenManager.expirationTime,
         email: user.email,
+        displayName: user.displayName
       }));
 
       setToastMessage('Login successful!');

@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button } from 'reactstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Login from "../components/LoginPageComponents/Login";
 import SignUp from '../components/LoginPageComponents/SignUp';
 
 const LoginPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, expirationTime } = useSelector((state) => state.auth); // Get auth state from Redux store
 
   const [isSignUp, setIsSignUp] = useState(location.state?.isSignUp || false);
+
+  // Check if there's a valid token and session before rendering the form
+  useEffect(() => {
+    if (isAuthenticated && expirationTime) {
+      const isTokenValid = new Date().getTime() < new Date(expirationTime).getTime();
+      if (isTokenValid) {
+        navigate('/profile'); // Redirect to profile if token is valid
+      }
+    }
+  }, [isAuthenticated, expirationTime, navigate]);
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
