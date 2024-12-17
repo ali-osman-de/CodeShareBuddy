@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardBody, Form, FormGroup, Label, Input, Row, Col, Button } from 'reactstrap';
+import { Card, CardBody, Form, FormGroup, Label, Input, Row, Col, Button, Toast, ToastHeader, ToastBody } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
@@ -10,6 +10,11 @@ const ProfileInformation = () => {
     const [fullName, setFullName] = useState('');
     const [age, setAge] = useState('');
     const [city, setCity] = useState('');
+
+    // State to control toast visibility and message
+    const [toastVisible, setToastVisible] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState('success'); // success, error, or warning
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -26,7 +31,7 @@ const ProfileInformation = () => {
                     setCity(userData.city || '');
                 } else {
                     console.log('Kullanıcı verisi bulunamadı.');
-                    setFullName(displayName || ''); 
+                    setFullName(displayName || '');
                 }
             } catch (error) {
                 console.error('Veri çekilirken hata oluştu:', error);
@@ -46,13 +51,32 @@ const ProfileInformation = () => {
                     city: city,
                 }, { merge: true });
 
-                alert('Bilgiler başarıyla kaydedildi.');
+                // Display success toast
+                setToastType('success');
+                setToastMessage('Bilgiler başarıyla kaydedildi.');
+                setToastVisible(true);
+
+                // Hide toast after 3 seconds
+                setTimeout(() => setToastVisible(false), 3000);
             } catch (error) {
                 console.error('Hata oluştu:', error);
-                alert('Bilgiler kaydedilirken hata oluştu.');
+
+                // Display error toast
+                setToastType('error');
+                setToastMessage('Bilgiler kaydedilirken hata oluştu.');
+                setToastVisible(true);
+
+                // Hide toast after 3 seconds
+                setTimeout(() => setToastVisible(false), 3000);
             }
         } else {
-            alert('Lütfen tüm alanları doldurunuz.');
+            // Display warning toast
+            setToastType('warning');
+            setToastMessage('Lütfen tüm alanları doldurunuz.');
+            setToastVisible(true);
+
+            // Hide toast after 3 seconds
+            setTimeout(() => setToastVisible(false), 3000);
         }
     };
 
@@ -123,6 +147,23 @@ const ProfileInformation = () => {
                     </Form>
                 </CardBody>
             </Card>
+
+            {/* Toast Notification */}
+            {toastVisible && (
+                <div 
+                    className="position-fixed bottom-0 end-0 p-3" 
+                    style={{ zIndex: 1050 }}
+                >
+                    <Toast>
+                        <ToastHeader icon={toastType === 'success' ? 'success' : toastType === 'error' ? 'danger' : 'warning'}>
+                            {toastType === 'success' ? 'Başarılı' : toastType === 'error' ? 'Hata' : 'Uyarı'}
+                        </ToastHeader>
+                        <ToastBody>
+                            {toastMessage}
+                        </ToastBody>
+                    </Toast>
+                </div>
+            )}
         </div>
     );
 };
