@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardTitle, CardSubtitle, CardText, Row, Col } from 'reactstrap'
+import { Card, CardBody, CardTitle, CardSubtitle, CardText, Row, Col, Spinner } from 'reactstrap'
 import { useNavigate } from 'react-router-dom'
 import { db } from "../../../firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 const HomePageContents = () => {
   const [contents, setContents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,11 +33,12 @@ const HomePageContents = () => {
 
             if (userDoc.exists()) {
               const userData = userDoc.data();
-              contentData.author = userData.fullName || 'Unknown'; 
+              contentData.author = userData.fullName || 'Unknown';
             }
           }
 
           fetchedContents.push({ ...contentData, id: contentId });
+          setLoading(false);
         }
 
         setContents(fetchedContents);
@@ -48,6 +50,19 @@ const HomePageContents = () => {
     fetchContents();
   }, []);
 
+
+  if (loading) {
+    return (
+      <div style={{
+        height: "50vh"
+      }} className="d-flex justify-content-center align-items-center loading-spinner-container">
+        <Spinner className="m-5" color="secondary">
+          Loading...
+        </Spinner>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -58,14 +73,21 @@ const HomePageContents = () => {
         <Card
           key={content.id}
           className="mb-5 border-1 rounded-4"
+          style={{
+            maxHeight: "300px"
+          }}
           onClick={() => navigate(`/content/${content.id}`)}
         >
           <Row className="d-flex align-items-start">
             <Col md="6">
               <img
+                style={{
+                  height: "300px",
+                  objectFit: "100%"
+                }}
                 src={content.image || "https://picsum.photos/600/300"}
                 alt="Card image"
-                className="img-fluid rounded-4 h-100 object-fit-cover"
+                className="img-fluid rounded-4  object-fit-cover"
               />
             </Col>
             <Col md="6">

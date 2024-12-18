@@ -10,11 +10,9 @@ const ProfileInformation = () => {
     const [fullName, setFullName] = useState('');
     const [age, setAge] = useState('');
     const [city, setCity] = useState('');
-
-    // State to control toast visibility and message
     const [toastVisible, setToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
-    const [toastType, setToastType] = useState('success'); // success, error, or warning
+    const [toastType, setToastType] = useState('success'); 
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -51,31 +49,26 @@ const ProfileInformation = () => {
                     city: city,
                 }, { merge: true });
 
-                // Display success toast
+  
                 setToastType('success');
                 setToastMessage('Bilgiler başarıyla kaydedildi.');
                 setToastVisible(true);
 
-                // Hide toast after 3 seconds
                 setTimeout(() => setToastVisible(false), 3000);
             } catch (error) {
                 console.error('Hata oluştu:', error);
 
-                // Display error toast
                 setToastType('error');
                 setToastMessage('Bilgiler kaydedilirken hata oluştu.');
                 setToastVisible(true);
 
-                // Hide toast after 3 seconds
                 setTimeout(() => setToastVisible(false), 3000);
             }
         } else {
-            // Display warning toast
             setToastType('warning');
             setToastMessage('Lütfen tüm alanları doldurunuz.');
             setToastVisible(true);
 
-            // Hide toast after 3 seconds
             setTimeout(() => setToastVisible(false), 3000);
         }
     };

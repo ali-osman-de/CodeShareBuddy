@@ -6,7 +6,7 @@ import CreatePage from '../components/CreatePageComponents/CreatePage'
 const CreateProjectPage = () => {
   return (
     <Container>
-      <Row className='mt-5'>
+      <Row className='mt-5 mb-5'>
         <Col xs="3">
           <SideMenu />
         </Col>
