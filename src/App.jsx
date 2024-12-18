@@ -52,7 +52,7 @@ const App = () => {
             }
           />
           <Route
-            path="/content"
+            path="/content/:id"
             element={
               <PrivateRoute>
                 <ContentPage />
