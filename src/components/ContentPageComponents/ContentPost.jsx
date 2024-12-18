@@ -13,9 +13,9 @@ const ContentPost = () => {
       try {
         const docRef = doc(db, "snippets", id);
         const docSnap = await getDoc(docRef);
-        
+
         if (docSnap.exists()) {
-          setContent(docSnap.data()); 
+          setContent(docSnap.data());
         } else {
           console.log("No such document!");
         }
@@ -28,16 +28,22 @@ const ContentPost = () => {
   }, [id]);
 
   if (!content) {
-    return <p>Loading...</p>; 
+    return <p>Loading...</p>;
   }
 
   return (
     <Container>
       <Row>
         <Col>
-          <Card className="border-0">
+          <Card style={{
+            maxHeight: "300px"
+          }} className="border-0">
             <h1 className="fw-light">{content.title}</h1>
             <CardImg
+              style={{
+                height: "600px",
+                objectFit: "100%"
+              }}
               className="rounded-5"
               top
               width="100%"

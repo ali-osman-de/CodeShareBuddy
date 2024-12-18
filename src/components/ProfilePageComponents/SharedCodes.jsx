@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Row, Col, Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Row, Col, Pagination, PaginationItem, PaginationLink, Spinner } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -7,22 +7,20 @@ import { useSelector } from "react-redux";
 
 const SharedCodes = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     const { uid } = useSelector((state) => state.auth);
-
 
     const [sharedCodes, setSharedCodes] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-
     const codesPerPage = 5;
-
 
     const fetchSharedCodes = async () => {
         try {
             const snippetRef = collection(db, "snippets");
-            const q = query(snippetRef, where("uid", "==", uid)); 
+            const q = query(snippetRef, where("uid", "==", uid));
             const querySnapshot = await getDocs(q);
             const codes = [];
 
@@ -31,9 +29,11 @@ const SharedCodes = () => {
             });
 
             setSharedCodes(codes);
-            setTotalPages(Math.ceil(codes.length / codesPerPage)); 
+            setTotalPages(Math.ceil(codes.length / codesPerPage));
         } catch (error) {
             console.error("Error fetching shared codes: ", error);
+        } finally {
+            setLoading(false); // Loading durdur
         }
     };
 
@@ -41,21 +41,56 @@ const SharedCodes = () => {
         fetchSharedCodes();
     }, [uid]);
 
-
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
-
 
     const currentCodes = sharedCodes.slice(
         (currentPage - 1) * codesPerPage,
         currentPage * codesPerPage
     );
 
+    // Eğer yükleme devam ediyorsa Spinner göster
+    if (loading) {
+        return (
+            <div
+                style={{
+                    height: "50vh"
+                }}
+                className="d-flex justify-content-center align-items-center loading-spinner-container"
+            >
+                <Spinner className="m-5" color="secondary">
+                    Loading...
+                </Spinner>
+            </div>
+        );
+    }
+
+    // Eğer hiç kod yoksa mesaj göster
+    if (!loading && sharedCodes.length === 0) {
+        return (
+            <div
+                style={{
+                    height: "50vh"
+                }}
+                className="d-flex justify-content-center align-items-center"
+            >
+                <h5 className="text-muted">Hiç kod paylaşımınız yok.</h5>
+            </div>
+        );
+    }
+
     return (
         <>
             {currentCodes.map((code) => (
-                <Card key={code.id} className="border-0 mt-4" onClick={() => navigate(`/content/${code.id}`)}>
+                <Card
+                    style={{
+                        maxHeight: "300px"
+                    }}
+                    key={code.id}
+                    className="border-0 mt-4"
+                    onClick={() => navigate(`/content/${code.id}`)}
+                >
                     <Row className="align-items-center">
                         <Col xs="8">
                             <CardBody>
@@ -70,7 +105,15 @@ const SharedCodes = () => {
                             </CardBody>
                         </Col>
                         <Col xs="4">
-                            <img alt="Sample" src={code.image} className="img-fluid rounded-5" />
+                            <img
+                                alt="Sample"
+                                style={{
+                                    height: "200px",
+                                    objectFit: "100%"
+                                }}
+                                src={code.image}
+                                className="img-fluid rounded-5"
+                            />
                         </Col>
                     </Row>
                 </Card>
