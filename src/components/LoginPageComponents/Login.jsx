@@ -28,10 +28,13 @@ const Login = () => {
 
       const user = await LogInUser(auth, formData.email, formData.password);
 
+
+      const expirationTime = user.stsTokenManager.expirationTime;
+
       dispatch(login({
         uid: user.uid,
         accessToken: user.stsTokenManager.accessToken,
-        expirationTime: user.stsTokenManager.expirationTime,
+        expirationTime: expirationTime,
         email: user.email,
         displayName: user.displayName
       }));
@@ -41,9 +44,12 @@ const Login = () => {
       setTimeout(() => {
         setToastVisible(true);
         setLoadingToastVisible(false);
+
+        const remainingTime = expirationTime - new Date().getTime();
+
         setTimeout(() => {
           navigate('/profile');
-        }, 5000);
+        }, Math.min(5000, remainingTime));
       }, 1000);
 
     } catch (error) {

@@ -1,24 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loadState, saveState, removeState } from "../utils/localStorageUtils";
 
-// localStorage'dan auth bilgilerini al
-const loadAuthState = () => {
-  const authState = JSON.parse(localStorage.getItem("authState"));
-  return authState || {
-    uid: "",
-    displayName: "",
-    accessToken: "",
-    expirationTime: null,
-    isAuthenticated: false,
-    user: null,
-  };
+const defaultAuthState = {
+  uid: "",
+  displayName: "",
+  accessToken: "",
+  expirationTime: null,
+  isAuthenticated: false,
+  user: null,
 };
+
+const loadAuthState = () => loadState("authState", defaultAuthState);
+
+let logoutTimer;
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: loadAuthState(), // Başlangıç durumu localStorage'dan yükle
+  initialState: loadAuthState(),
   reducers: {
     login(state, action) {
-      const { user, accessToken, expirationTime, displayName, uid } = action.payload;
+      const { user, accessToken, expirationTime, displayName, uid } =
+        action.payload;
       state.isAuthenticated = true;
       state.user = user;
       state.accessToken = accessToken;
@@ -26,26 +28,17 @@ const authSlice = createSlice({
       state.displayName = displayName;
       state.uid = uid;
 
-      // localStorage'a kaydet
-      localStorage.setItem("authState", JSON.stringify({
-        isAuthenticated: true,
-        user,
-        accessToken,
-        expirationTime,
-        displayName,
-        uid,
-      }));
+      saveState("authState", state);
 
-      const remainingTime = new Date(expirationTime).getTime() - new Date().getTime();
+
+      if (logoutTimer) clearTimeout(logoutTimer);
+
+
+      const remainingTime =
+        new Date(expirationTime).getTime() - new Date().getTime();
       if (remainingTime > 0) {
-        setTimeout(() => {
-          state.isAuthenticated = false;
-          state.user = null;
-          state.accessToken = "";
-          state.expirationTime = null;
-          state.displayName = "";
-          state.uid = "";
-          localStorage.removeItem("authState");
+        logoutTimer = setTimeout(() => {
+          authSlice.caseReducers.logout(state); 
         }, remainingTime);
       }
     },
@@ -56,11 +49,33 @@ const authSlice = createSlice({
       state.expirationTime = null;
       state.displayName = "";
       state.uid = "";
-      
-      localStorage.removeItem("authState");
+
+
+      removeState("authState");
+
+
+      if (logoutTimer) clearTimeout(logoutTimer);
+    },
+    refreshToken(state, action) {
+
+      const { accessToken, expirationTime } = action.payload;
+      state.accessToken = accessToken;
+      state.expirationTime = expirationTime;
+
+      saveState("authState", state);
+
+
+      if (logoutTimer) clearTimeout(logoutTimer);
+      const remainingTime =
+        new Date(expirationTime).getTime() - new Date().getTime();
+      if (remainingTime > 0) {
+        logoutTimer = setTimeout(() => {
+          authSlice.caseReducers.logout(state);
+        }, remainingTime);
+      }
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, refreshToken } = authSlice.actions;
 export default authSlice.reducer;
