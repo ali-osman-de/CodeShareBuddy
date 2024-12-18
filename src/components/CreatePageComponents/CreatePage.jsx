@@ -1,14 +1,21 @@
 import React, { useState } from "react";
 import { Container, Button, Input, Form, FormGroup, Label } from "reactstrap";
+import { db } from "../../../firebase";
+import { collection, addDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 const CreatePage = () => {
+    const { uid } = useSelector((state) => state.auth);
+
     const [formData, setFormData] = useState({
         title: "",
         description: "",
         code: "",
         programmingLanguage: "JavaScript",
+        image: null, 
     });
 
+    const [uploading, setUploading] = useState(false);
     const languages = ["JavaScript", "Python", "TypeScript", "Java", "C++", "Go"];
 
     const handleChange = (e) => {
@@ -20,16 +27,54 @@ const CreatePage = () => {
         setFormData((prevState) => ({ ...prevState, programmingLanguage: lang }));
     };
 
-    const handleSubmit = (e) => {
+    const handleImageChange = (e) => {
+        setFormData((prevState) => ({ ...prevState, image: e.target.files[0] }));
+    };
+
+    // Resmi base64 formatına dönüştürme
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result); // reader.result -> Base64 verisi
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+        setUploading(true);
+
+        try {
+            let base64Image = "";
+
+            if (formData.image) {
+                // Resmi Base64 formatına dönüştür
+                base64Image = await convertToBase64(formData.image);
+            }
+
+            // Firestore'a veri kaydet
+            const snippetRef = collection(db, "snippets");
+            await addDoc(snippetRef, {
+                ...formData,
+                uid,
+                image: base64Image, // Base64 formatında resmi veritabanına ekle
+                createdAt: new Date(),
+            });
+
+            console.log("Snippet successfully created!");
+        } catch (error) {
+            console.error("Error creating snippet:", error);
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (
-        <Container style={{ maxWidth: "800px"}}>
+        <Container style={{ maxWidth: "800px" }}>
             <h2 className="mb-3">New Snippet</h2>
             <p className="text-muted">
-                <strong>Sharing is good!</strong>  Here is the fastest and easiest way to share your code with the world. Paste your code into the editor below, select your programming language and click <strong>'Share'.</strong> Create a great snippet that everyone will benefit from!
+                <strong>Sharing is good!</strong> Here is the fastest and easiest way to share your code with the world. Paste your code into the editor below, select your programming language and click <strong>'Share'.</strong> Create a great snippet that everyone will benefit from!
             </p>
             <Form onSubmit={handleSubmit}>
                 <FormGroup>
@@ -81,10 +126,18 @@ const CreatePage = () => {
                         placeholder="Paste your code here"
                         value={formData.code}
                         onChange={handleChange}
-                        style={{
-                            minHeight: "200px",
-                            fontFamily: "monospace",
-                        }}
+                        style={{ minHeight: "200px", fontFamily: "monospace" }}
+                    />
+                </FormGroup>
+
+                {/* Resim Yükleme Input'u */}
+                <FormGroup>
+                    <Label for="image">Image</Label>
+                    <Input
+                        type="file"
+                        name="image"
+                        id="image"
+                        onChange={handleImageChange}
                     />
                 </FormGroup>
 
@@ -97,8 +150,9 @@ const CreatePage = () => {
                         border: "none",
                         fontSize: "1.1rem",
                     }}
+                    disabled={uploading}
                 >
-                    Share
+                    {uploading ? "Uploading..." : "Share"}
                 </Button>
             </Form>
         </Container>
