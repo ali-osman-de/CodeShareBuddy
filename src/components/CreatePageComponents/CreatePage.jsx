@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Container, Button, Input, Form, FormGroup, Label } from "reactstrap";
 import { db } from "../../../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, doc, setDoc, addDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
 
 const CreatePage = () => {
+    const location = useLocation();
+    const { code } = location.state || {}; // Gelen veriyi al
     const { uid } = useSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
@@ -12,11 +15,24 @@ const CreatePage = () => {
         description: "",
         code: "",
         programmingLanguage: "JavaScript",
-        image: null, 
+        image: null,
     });
 
     const [uploading, setUploading] = useState(false);
     const languages = ["JavaScript", "Python", "TypeScript", "Java", "C++", "Go"];
+
+    useEffect(() => {
+        if (code) {
+            // Eğer düzenleme için veri geldiyse, formu doldur
+            setFormData({
+                title: code.title || "",
+                description: code.description || "",
+                code: code.code || "",
+                programmingLanguage: code.programmingLanguage || "JavaScript",
+                image: code.image || null,
+            });
+        }
+    }, [code]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,12 +47,11 @@ const CreatePage = () => {
         setFormData((prevState) => ({ ...prevState, image: e.target.files[0] }));
     };
 
-    // Resmi base64 formatına dönüştürme
     const convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result); // reader.result -> Base64 verisi
+            reader.onload = () => resolve(reader.result);
             reader.onerror = (error) => reject(error);
         });
     };
@@ -48,23 +63,33 @@ const CreatePage = () => {
         try {
             let base64Image = "";
 
-            if (formData.image) {
-                // Resmi Base64 formatına dönüştür
+            if (formData.image && typeof formData.image !== "string") {
                 base64Image = await convertToBase64(formData.image);
             }
 
-            // Firestore'a veri kaydet
-            const snippetRef = collection(db, "snippets");
-            await addDoc(snippetRef, {
-                ...formData,
-                uid,
-                image: base64Image, // Base64 formatında resmi veritabanına ekle
-                createdAt: new Date(),
-            });
+            if (code) {
+                // Eğer düzenleme yapılıyorsa
+                const snippetRef = doc(db, "snippets", code.id); // Mevcut dökümanı güncelle
+                await setDoc(snippetRef, {
+                    ...formData,
+                    uid,
+                    image: base64Image || formData.image,
+                    updatedAt: new Date(),
+                });
+            } else {
+                // Yeni bir snippet oluşturuluyorsa
+                const snippetRef = collection(db, "snippets");
+                await addDoc(snippetRef, {
+                    ...formData,
+                    uid,
+                    image: base64Image,
+                    createdAt: new Date(),
+                });
+            }
 
-            console.log("Snippet successfully created!");
+            console.log("Snippet successfully saved!");
         } catch (error) {
-            console.error("Error creating snippet:", error);
+            console.error("Error saving snippet:", error);
         } finally {
             setUploading(false);
         }
@@ -72,10 +97,7 @@ const CreatePage = () => {
 
     return (
         <Container style={{ maxWidth: "800px" }}>
-            <h2 className="mb-3">New Snippet</h2>
-            <p className="text-muted">
-                <strong>Sharing is good!</strong> Here is the fastest and easiest way to share your code with the world. Paste your code into the editor below, select your programming language and click <strong>'Share'.</strong> Create a great snippet that everyone will benefit from!
-            </p>
+            <h2 className="mb-3">{code ? "Edit Snippet" : "New Snippet"}</h2>
             <Form onSubmit={handleSubmit}>
                 <FormGroup>
                     <Label for="title">Title</Label>
@@ -130,7 +152,6 @@ const CreatePage = () => {
                     />
                 </FormGroup>
 
-                {/* Resim Yükleme Input'u */}
                 <FormGroup>
                     <Label for="image">Image</Label>
                     <Input
@@ -152,7 +173,7 @@ const CreatePage = () => {
                     }}
                     disabled={uploading}
                 >
-                    {uploading ? "Uploading..." : "Share"}
+                    {uploading ? "Saving..." : code ? "Update" : "Share"}
                 </Button>
             </Form>
         </Container>
