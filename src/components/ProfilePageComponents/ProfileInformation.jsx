@@ -9,7 +9,7 @@ const ProfileInformation = () => {
 
     const [fullName, setFullName] = useState('');
     const [age, setAge] = useState('');
-    const [city, setCity] = useState('');
+    const [nickName, setNickName] = useState('');
     const [toastVisible, setToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastType, setToastType] = useState('success');
@@ -26,7 +26,7 @@ const ProfileInformation = () => {
                     const userData = userDoc.data();
                     setFullName(userData.fullName || displayName || '');
                     setAge(userData.age || '');
-                    setCity(userData.city || '');
+                    setNickName(userData.nickName || '');
                 } else {
                     console.log('Kullanıcı verisi bulunamadı.');
                     setFullName(displayName || '');
@@ -40,7 +40,7 @@ const ProfileInformation = () => {
     }, [uid, displayName]);
 
     const handleSave = async () => {
-        if (fullName && age && city) {
+        if (fullName && age && nickName) {
             try {
                 const userRef = doc(db, 'users', uid);
                 const userDoc = await getDoc(userRef);
@@ -48,11 +48,10 @@ const ProfileInformation = () => {
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
 
-                    // Tüm bilgilerin aynı olup olmadığını kontrol et
                     if (
                         userData.fullName === fullName &&
                         userData.age === age &&
-                        userData.city === city
+                        userData.nickName === nickName
                     ) {
                         setToastType('info'); // Info tipindeki toast
                         setToastMessage('Bilgileriniz zaten güncel.');
@@ -63,11 +62,10 @@ const ProfileInformation = () => {
                     }
                 }
 
-                // Eğer bilgiler farklıysa, kaydet
                 await setDoc(userRef, {
                     fullName: fullName,
                     age: age,
-                    city: city,
+                    nickName: nickName,
                 }, { merge: true });
 
                 setToastType('success');
@@ -137,15 +135,15 @@ const ProfileInformation = () => {
                             <Col md={12}>
                                 <FormGroup floating>
                                     <Input
-                                        id="city"
-                                        name="city"
+                                        id="nickName"
+                                        name="nickName"
                                         type="text"
-                                        placeholder="Şehrinizi giriniz"
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
+                                        placeholder="nickName"
+                                        value={nickName}
+                                        onChange={(e) => setNickName(e.target.value)}
                                         className="bg-light border-0"
                                     />
-                                    <Label for="city">Şehir</Label>
+                                    <Label for="Nickname">Nickname</Label>
                                 </FormGroup>
                             </Col>
                         </Row>

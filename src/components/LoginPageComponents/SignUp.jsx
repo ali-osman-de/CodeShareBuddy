@@ -9,10 +9,10 @@ import { login } from '../../features/authSlice';
 const SignUp = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [formData, setFormData] = useState({ email: '', password: '', fullName: '', confirmPassword: '' });
+    const [formData, setFormData] = useState({ email: '', password: '', fullName: '', nickName: '', confirmPassword: '' });
     const [toastVisible, setToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
-    const [toastColor, setToastColor] = useState('success');
+    const [toastColor, setToastColor] = useState('');
     const [loadingToastVisible, setLoadingToastVisible] = useState(false);
 
     const handleChange = (e) => {
@@ -33,7 +33,7 @@ const SignUp = () => {
         try {
             setLoadingToastVisible(true);
 
-            const user = await RegisterUser(auth, formData.email, formData.password, formData.fullName);
+            const user = await RegisterUser(auth, formData.email, formData.password, formData.fullName, formData.nickName);
 
             dispatch(login({
                 uid: user.uid,
@@ -42,22 +42,37 @@ const SignUp = () => {
 
             setToastMessage('Registration successful!');
             setToastColor('success');
+            setToastVisible(true);
+
             setTimeout(() => {
-                setToastVisible(true);
                 setLoadingToastVisible(false);
                 setTimeout(() => {
                     navigate('/login');
-                }, 5000);
-            }, 1000);
+                    setToastVisible(false);
+                }, 1000);
+            }, 3000);
 
         } catch (error) {
-            console.error('Error:', error);
-            setLoadingToastVisible(false);
-            setToastMessage("Error during registration.");
-            setToastColor('danger');
+            console.error('Error during registration:', error);
+            setToastColor('warning');
+
+            if (error.message.includes('auth/weak-password')) {
+                setToastMessage("Password should be at least 6 characters.");
+            } else if (error.message.includes('auth/email-already-in-use')) {
+                setToastMessage("This email is already registered.");
+            } else {
+                setToastMessage("Error during registration.");
+            }
+
             setToastVisible(true);
+
+            setTimeout(() => {
+                setLoadingToastVisible(false);
+                setToastVisible(false);
+            }, 3000);
         }
     };
+
 
     const inputStyles = {
         borderRadius: '12px',
@@ -86,7 +101,7 @@ const SignUp = () => {
                             <Input
                                 id="fullName"
                                 name="fullName"
-                                placeholder="Full Name"
+                                placeholder="FullName"
                                 type="text"
                                 value={formData.fullName}
                                 onChange={handleChange}
@@ -107,6 +122,19 @@ const SignUp = () => {
                                 required
                             />
                             <Label for="email">Email</Label>
+                        </FormGroup>
+                        <FormGroup floating>
+                            <Input
+                                id="nickName"
+                                name="nickName"
+                                placeholder="nickName"
+                                type="text"
+                                value={formData.nickName}
+                                onChange={handleChange}
+                                style={inputStyles}
+                                required
+                            />
+                            <Label for="nickName">Nickname</Label>
                         </FormGroup>
                         <FormGroup floating>
                             <Input
@@ -156,11 +184,11 @@ const SignUp = () => {
                     {/* Success or Error Toast */}
                     {toastVisible && (
                         <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 9999 }}>
-                            <Toast className={toastColor === 'success' ? 'bg-success' : 'bg-danger'}>
-                                <ToastHeader className='fs-5 fw-normal '>
-                                    {toastColor === 'success' ? 'Success' : 'Error'}
+                            <Toast className={toastColor === 'success' ? 'bg-success' : toastColor === 'warning' ? 'bg-warning' : 'bg-danger'}>
+                                <ToastHeader className='fs-5 fw-normal'>
+                                    {toastColor === 'success' ? 'Success' : toastColor === 'warning' ? 'Warning' : 'Error'}
                                 </ToastHeader>
-                                <ToastBody className='fw-light text-center fs-6 text-light'>
+                                <ToastBody className='fw-semibold text-center fs-6 text-dark'>
                                     {toastMessage}
                                 </ToastBody>
                             </Toast>

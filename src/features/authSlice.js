@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loadState, saveState, removeState } from "../utils/localStorageUtils";
+import { loadState, saveState, removeState } from "../utils/Cookies";
 
 const defaultAuthState = {
   uid: "",
@@ -28,17 +28,14 @@ const authSlice = createSlice({
       state.displayName = displayName;
       state.uid = uid;
 
-      saveState("authState", state);
-
+      saveState("authState", state, { expires: new Date(expirationTime) });
 
       if (logoutTimer) clearTimeout(logoutTimer);
-
-
       const remainingTime =
         new Date(expirationTime).getTime() - new Date().getTime();
       if (remainingTime > 0) {
         logoutTimer = setTimeout(() => {
-          authSlice.caseReducers.logout(state); 
+          authSlice.caseReducers.logout(state);
         }, remainingTime);
       }
     },
@@ -50,20 +47,16 @@ const authSlice = createSlice({
       state.displayName = "";
       state.uid = "";
 
-
       removeState("authState");
-
 
       if (logoutTimer) clearTimeout(logoutTimer);
     },
     refreshToken(state, action) {
-
       const { accessToken, expirationTime } = action.payload;
       state.accessToken = accessToken;
       state.expirationTime = expirationTime;
 
-      saveState("authState", state);
-
+      saveState("authState", state, { expires: new Date(expirationTime) });
 
       if (logoutTimer) clearTimeout(logoutTimer);
       const remainingTime =

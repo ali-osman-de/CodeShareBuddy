@@ -33,7 +33,7 @@ const SharedCodes = () => {
         } catch (error) {
             console.error("Error fetching shared codes: ", error);
         } finally {
-            setLoading(false); // Loading durdur
+            setLoading(false); 
         }
     };
 
@@ -50,7 +50,7 @@ const SharedCodes = () => {
         currentPage * codesPerPage
     );
 
-    // Eğer yükleme devam ediyorsa Spinner göster
+
     if (loading) {
         return (
             <div
@@ -66,7 +66,7 @@ const SharedCodes = () => {
         );
     }
 
-    // Eğer hiç kod yoksa mesaj göster
+
     if (!loading && sharedCodes.length === 0) {
         return (
             <div
