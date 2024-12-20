@@ -1,238 +1,246 @@
-import React, { useState } from "react";
-import { Container, Button, Input, Form, FormGroup, Label, Card, CardBody, Toast, ToastBody, ToastHeader } from "reactstrap";
-import { db } from "../../../firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { useSelector } from "react-redux";
-import { Editor } from "@monaco-editor/react";
+import React, { useEffect, useState } from 'react';
+import { Button, Card, CardBody, CardSubtitle, CardTitle, Toast, ToastBody, ToastHeader } from 'reactstrap';
+import { useSelector } from 'react-redux';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../firebase';
 
-const CreatePage = () => {
-    const { uid } = useSelector((state) => state.auth);
+const ProfileHeader = () => {
+  const { uid, displayName } = useSelector((state) => state.auth);
+  const [fullName, setFullName] = useState('');
+  const [age, setAge] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+  const [imageBase64, setImageBase64] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [samePhotoToast, setSamePhotoToast] = useState(false);
 
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        code: "",
-        programmingLanguage: "JavaScript",
-        image: null,
-    });
 
-    const [uploading, setUploading] = useState(false);
-    const [toast, setToast] = useState({ show: false, success: false, message: "" });
+  const fileInputRef = React.createRef();
 
-    const languages = ["JavaScript", "Python", "TypeScript", "Java", "C++", "Go"];
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!uid) return;
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevState) => ({ ...prevState, [name]: value }));
-    };
+      try {
+        const userRef = doc(db, 'users', uid);
+        const userDoc = await getDoc(userRef);
 
-    const handleLanguageSelect = (lang) => {
-        setFormData((prevState) => ({ ...prevState, programmingLanguage: lang }));
-    };
-
-    const handleImageChange = (e) => {
-        setFormData((prevState) => ({ ...prevState, image: e.target.files[0] }));
-    };
-
-    // Resmi base64 formatına dönüştürme ve küçültme
-    const convertToBase64AndResize = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const base64Data = reader.result;
-                const img = new Image();
-                img.src = base64Data;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const maxWidth = 500;
-                    const maxHeight = 500;
-                    let width = img.width;
-                    let height = img.height;
-
-                    // Scale image
-                    if (width > height) {
-                        if (width > maxWidth) {
-                            height = (height * maxWidth) / width;
-                            width = maxWidth;
-                        }
-                    } else {
-                        if (height > maxHeight) {
-                            width = (width * maxHeight) / height;
-                            height = maxHeight;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL()); // Return base64 string
-                };
-                img.onerror = (error) => reject(error);
-            };
-            reader.onerror = (error) => reject(error);
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        // Validate that title, description, and image are provided
-        if (!formData.title || !formData.description || !formData.image) {
-            setToast({
-                show: true,
-                success: false,
-                message: "Title, description, and image are required fields.",
-            });
-            return;
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setFullName(userData.fullName);
+          setAge(userData.age);
+          if (userData.profileImage) {
+            setProfileImage(userData.profileImage);
+          }
+        } else {
+          console.log('Kullanıcı verisi bulunamadı.');
+          setFullName(displayName || '');
         }
+      } catch (error) {
+        console.error('Veri çekilirken hata oluştu:', error);
+      }
+    };
 
-        setUploading(true);
+    fetchUserData();
+  }, [uid]);
 
-        try {
-            let base64Image = "";
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
 
-            if (formData.image) {
-                base64Image = await convertToBase64AndResize(formData.image);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Data = reader.result;
+
+        // Sıkıştırma işlemi
+        const img = new Image();
+        img.src = base64Data;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxWidth = 500; 
+          const maxHeight = 500; 
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width;
+              width = maxWidth;
             }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height;
+              height = maxHeight;
+            }
+          }
 
-            const snippetRef = collection(db, "snippets");
-            await addDoc(snippetRef, {
-                ...formData,
-                uid,
-                image: base64Image,
-                createdAt: new Date(),
-            });
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
 
-            setToast({
-                show: true,
-                success: true,
-                message: "Snippet successfully created!",
-            });
-            console.log("Snippet successfully created!");
-        } catch (error) {
-            console.error("Error creating snippet:", error);
-            setToast({
-                show: true,
-                success: false,
-                message: "Error creating snippet, please try again.",
-            });
-        } finally {
-            setUploading(false);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          setProfileImage(compressedBase64);
+          setImageBase64(compressedBase64);
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleSaveImage = async () => {
+    if (!uid || !imageBase64) return;
+
+    try {
+      const userRef = doc(db, 'users', uid);
+
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        if (userData.profileImage === imageBase64) {
+          console.log('Yeni yüklenen fotoğraf mevcut fotoğraf ile aynı.');
+          setSamePhotoToast(true);
+          setTimeout(() => setSamePhotoToast(false), 3000);
+          return;
         }
-    };
+      }
 
-    return (
-        <Container style={{ maxWidth: "800px" }}>
-            <h2 className="mb-3">New Snippet</h2>
-            <p className="text-muted">
-                <strong>Sharing is good!</strong> Here is the fastest and easiest way to share your code with the world. Paste your code into the editor below, select your programming language and click <strong>'Share'.</strong> Create a great snippet that everyone will benefit from!
-            </p>
-            
-            {/* Toast Notification */}
-            {toast.show && (
-                <div className="mb-3">
-                    <Toast isOpen={toast.show}>
-                        <ToastHeader>
-                            {toast.success ? "Success" : "Error"}
-                        </ToastHeader>
-                        <ToastBody>{toast.message}</ToastBody>
-                    </Toast>
-                </div>
-            )}
 
-            <Form onSubmit={handleSubmit}>
-                <FormGroup>
-                    <Label for="title">Title</Label>
-                    <Input
-                        type="text"
-                        name="title"
-                        id="title"
-                        placeholder="Enter title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        required
-                    />
-                </FormGroup>
+      await updateDoc(userRef, {
+        profileImage: imageBase64,
+      });
 
-                <FormGroup>
-                    <Label for="description">Description</Label>
-                    <Input
-                        type="textarea"
-                        name="description"
-                        id="description"
-                        placeholder="Enter description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        style={{ minHeight: "100px" }}
-                        required
-                    />
-                </FormGroup>
+      console.log('Profil fotoğrafı başarıyla güncellendi.');
 
-                <div className="mb-3">
-                    {languages.map((lang) => (
-                        <Button
+      setShowToast(true);
 
-                            key={lang}
-                            outline
-                            color="primary"
-                            className="me-2 mb-2 text-dark"
-                            onClick={() => handleLanguageSelect(lang)}
-                            active={formData.programmingLanguage === lang}
-                        >
-                            {lang}
-                        </Button>
-                    ))}
-                </div>
 
-                <FormGroup>
-                    <Card>
-                        <CardBody className="bg-secondary">
-                            <Editor
-                                className="bg-dark"
-                                value={formData.code}
-                                onChange={(value) => setFormData((prevState) => ({ ...prevState, code: value }))}
-                                height="200px"
-                                language={formData.programmingLanguage.toLowerCase()}
-                                defaultValue="// Start writing your code here"
-                                options={{
-                                    fontSize: 14,
-                                    minimap: { enabled: false },
-                                }}
-                            />
-                        </CardBody>
-                    </Card>
-                </FormGroup>
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Profil fotoğrafı güncellenirken hata oluştu:', error);
+    }
+  };
 
-                {/* Resim Yükleme Input'u */}
-                <FormGroup>
-                    <Label for="image">Image</Label>
-                    <Input
-                        type="file"
-                        name="image"
-                        id="image"
-                        onChange={handleImageChange}
-                        required
-                    />
-                </FormGroup>
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
 
-                <Button
-                    type="submit"
-                    color="primary"
-                    style={{
-                        width: "100%",
-                        backgroundColor: "#3a86ff",
-                        border: "none",
-                        fontSize: "1.1rem",
-                    }}
-                    disabled={uploading}
-                >
-                    {uploading ? "Uploading..." : "Share"}
-                </Button>
-            </Form>
-        </Container>
-    );
+  return (
+    <div className="d-flex justify-content-center">
+      <div className="d-flex flex-column align-items-center">
+        {/* Profil Resmi */}
+        <div
+          className="bd-placeholder-img rounded-circle"
+          style={{
+            width: '140px',
+            height: '140px',
+            backgroundColor: '#777',
+            cursor: 'pointer',
+            overflow: 'hidden',
+          }}
+          onClick={handleImageClick}
+        >
+          {profileImage ? (
+            <img
+              src={profileImage}
+              alt="ProfilePicture"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="100%"
+              height="100%"
+              viewBox="0 0 100 100"
+            >
+              <rect width="100%" height="100%" fill="#777" />
+              <text
+                x="50%"
+                y="50%"
+                fill="#fff"
+                dy=".3em"
+                fontSize="20"
+                textAnchor="middle"
+              >
+                No Image
+              </text>
+            </svg>
+          )}
+        </div>
+
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+
+        {/* Kullanıcı Bilgileri */}
+        <Card style={{ border: 'none' }}>
+          <CardBody className="text-center">
+            <CardTitle className="fs-3 fw-semibold">
+              {fullName || 'User Name'}
+            </CardTitle>
+            <CardSubtitle className="mb-2 fs-6 fw-light text-muted">
+              Age {age || 'N/A'}
+            </CardSubtitle>
+            <div className="mx-auto gap-3 mt-3">
+              <Button
+                className="bg-dark text-white border-0 fs-6 fw-light"
+                onClick={handleSaveImage}
+              >
+                Update Photo
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+
+      {/* Toast Mesajı */}
+      {showToast && (
+        <div
+          className="position-fixed bottom-0 end-0 p-3"
+          style={{
+            zIndex: 1050,
+          }}
+        >
+          <Toast>
+            <ToastHeader icon="success">
+              Profile Photo Update
+            </ToastHeader>
+            <ToastBody>
+              Your profile image was updated successfully!
+            </ToastBody>
+          </Toast>
+        </div>
+      )}
+
+      {samePhotoToast && (
+        <div
+          className="position-fixed bottom-0 end-0 p-3"
+          style={{
+            zIndex: 1050
+          }}
+        >
+          <Toast>
+            <ToastHeader icon="warning">
+              Profile Photo
+            </ToastHeader>
+            <ToastBody>
+              The uploaded image is the same as your current profile picture.
+            </ToastBody>
+          </Toast>
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default CreatePage;
+export default ProfileHeader;
