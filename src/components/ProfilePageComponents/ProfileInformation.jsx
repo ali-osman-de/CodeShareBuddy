@@ -12,7 +12,7 @@ const ProfileInformation = () => {
     const [city, setCity] = useState('');
     const [toastVisible, setToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
-    const [toastType, setToastType] = useState('success'); 
+    const [toastType, setToastType] = useState('success');
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -43,13 +43,33 @@ const ProfileInformation = () => {
         if (fullName && age && city) {
             try {
                 const userRef = doc(db, 'users', uid);
+                const userDoc = await getDoc(userRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+
+                    // Tüm bilgilerin aynı olup olmadığını kontrol et
+                    if (
+                        userData.fullName === fullName &&
+                        userData.age === age &&
+                        userData.city === city
+                    ) {
+                        setToastType('info'); // Info tipindeki toast
+                        setToastMessage('Bilgileriniz zaten güncel.');
+                        setToastVisible(true);
+
+                        setTimeout(() => setToastVisible(false), 3000);
+                        return; // İşlem burada sonlandırılır
+                    }
+                }
+
+                // Eğer bilgiler farklıysa, kaydet
                 await setDoc(userRef, {
                     fullName: fullName,
                     age: age,
                     city: city,
                 }, { merge: true });
 
-  
                 setToastType('success');
                 setToastMessage('Bilgiler başarıyla kaydedildi.');
                 setToastVisible(true);
@@ -72,6 +92,7 @@ const ProfileInformation = () => {
             setTimeout(() => setToastVisible(false), 3000);
         }
     };
+
 
     return (
         <div className="d-flex justify-content-center">
@@ -141,15 +162,22 @@ const ProfileInformation = () => {
                 </CardBody>
             </Card>
 
-            {/* Toast Notification */}
             {toastVisible && (
-                <div 
-                    className="position-fixed bottom-0 end-0 p-3" 
+                <div
+                    className="position-fixed bottom-0 end-0 p-3"
                     style={{ zIndex: 1050 }}
                 >
                     <Toast>
-                        <ToastHeader icon={toastType === 'success' ? 'success' : toastType === 'error' ? 'danger' : 'warning'}>
-                            {toastType === 'success' ? 'Başarılı' : toastType === 'error' ? 'Hata' : 'Uyarı'}
+                        <ToastHeader icon={
+                            toastType === 'success' ? 'success' :
+                                toastType === 'error' ? 'danger' :
+                                    toastType === 'warning' ? 'warning' :
+                                        'info'
+                        }>
+                            {toastType === 'success' ? 'Başarılı' :
+                                toastType === 'error' ? 'Hata' :
+                                    toastType === 'warning' ? 'Uyarı' :
+                                        'Bilgi'}
                         </ToastHeader>
                         <ToastBody>
                             {toastMessage}
@@ -157,6 +185,7 @@ const ProfileInformation = () => {
                     </Toast>
                 </div>
             )}
+
         </div>
     );
 };

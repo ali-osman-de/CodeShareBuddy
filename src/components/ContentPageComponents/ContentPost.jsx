@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle } from "reactstrap";
+import { Container, Row, Col, Card, CardImg, CardBody, CardText } from "reactstrap";
+import { Editor } from "@monaco-editor/react";
 
 const ContentPost = () => {
   const { id } = useParams();
@@ -52,7 +53,20 @@ const ContentPost = () => {
             />
             <CardBody>
               <h4 className="fw-light">{content.description}</h4>
-              <CardText>{content.code}</CardText>
+              <CardBody className="mt-5 bg-secondary">
+                <Editor
+                  className="bg-dark"
+                  value={content.programmingLanguage}
+                  height="200px"
+                  language={content.programmingLanguage.toLowerCase()}
+                  defaultValue="// Start writing your code here"
+                  options={{
+                    fontSize: 18,
+                    minimap: { enabled: false },
+                  }}
+                />
+              </CardBody>
+
             </CardBody>
           </Card>
         </Col>
