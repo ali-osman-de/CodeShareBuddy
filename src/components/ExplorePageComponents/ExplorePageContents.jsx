@@ -119,11 +119,11 @@ const ExplorePageContents = () => {
                                 />
                                 <CardBody className={`position-absolute w-100 h-100 top-0 start-0 bg-dark bg-opacity-75 text-white transition-opacity ${hoveredCard === index ? 'opacity-100' : 'opacity-0'}`}
                                     style={{ transition: 'opacity 0.3s ease' }}>
-                                    <CardTitle tag="h2">{snippet.title || "Untitled Snippet"}</CardTitle>
+                                    <CardTitle tag="h4" style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>{snippet.title || "Untitled Snippet"}</CardTitle>
                                     <CardSubtitle className="mb-2">
                                         {snippet.programmingLanguage || "Unknown Category"}
                                     </CardSubtitle>
-                                    <CardText>
+                                    <CardText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
                                         {snippet.description || "No description provided..."}
                                     </CardText>
                                     <div className="d-flex justify-content-between align-items-center">

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Container, Button, Input, Form, FormGroup, Label } from "reactstrap";
+import { Container, Button, Input, Form, FormGroup, Label, Card, CardBody } from "reactstrap";
 import { db } from "../../../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { Editor } from "@monaco-editor/react";
 
 const CreatePage = () => {
     const { uid } = useSelector((state) => state.auth);
@@ -12,7 +13,7 @@ const CreatePage = () => {
         description: "",
         code: "",
         programmingLanguage: "JavaScript",
-        image: null, 
+        image: null,
     });
 
     const [uploading, setUploading] = useState(false);
@@ -118,17 +119,24 @@ const CreatePage = () => {
                 </div>
 
                 <FormGroup>
-                    <Label for="code">Code</Label>
-                    <Input
-                        type="textarea"
-                        name="code"
-                        id="code"
-                        placeholder="Paste your code here"
-                        value={formData.code}
-                        onChange={handleChange}
-                        style={{ minHeight: "200px", fontFamily: "monospace" }}
-                    />
+                    <Card>
+                        <CardBody className="bg-secondary">
+                            <Editor
+                                className="bg-dark"
+                                value={formData.code}
+                                onChange={(value) => setFormData((prevState) => ({ ...prevState, code: value }))}
+                                height="200px"
+                                language={formData.programmingLanguage.toLowerCase()}
+                                defaultValue="// Start writing your code here"
+                                options={{
+                                    fontSize: 14,
+                                    minimap: { enabled: false },
+                                }}
+                            />
+                        </CardBody>
+                    </Card>
                 </FormGroup>
+
 
                 {/* Resim Yükleme Input'u */}
                 <FormGroup>
