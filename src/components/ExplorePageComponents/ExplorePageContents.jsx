@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Input, Spinner } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
-import { db } from "../../../firebase"; // Firestore bağlantısı
+import { db } from "../../../firebase"; 
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 const ExplorePageContents = () => {
     const [hoveredCard, setHoveredCard] = useState(null);
-    const [snippets, setSnippets] = useState([]); // Firestore'dan gelen snippet'ler
-    const [filteredSnippets, setFilteredSnippets] = useState([]); // Filtrelenmiş snippet'ler
-    const [searchQuery, setSearchQuery] = useState(""); // Arama durumu
-    const [loading, setLoading] = useState(true); // Yükleme durumu
+    const [snippets, setSnippets] = useState([]); 
+    const [filteredSnippets, setFilteredSnippets] = useState([]); 
+    const [searchQuery, setSearchQuery] = useState(""); 
+    const [loading, setLoading] = useState(true); 
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSnippets = async () => {
             try {
-                const snippetsRef = collection(db, "snippets"); // Snippets koleksiyonu
+                const snippetsRef = collection(db, "snippets"); 
                 const querySnapshot = await getDocs(snippetsRef);
 
                 const fetchedSnippets = [];
@@ -23,16 +23,16 @@ const ExplorePageContents = () => {
                     const snippetData = docSnap.data();
                     const snippetId = docSnap.id;
 
-                    // Eklenmiş yazar bilgisi
+                  
                     if (snippetData.uid) {
                         const userDocRef = doc(db, "users", snippetData.uid);
                         const userDoc = await getDoc(userDocRef);
                         if (userDoc.exists()) {
-                            snippetData.author = userDoc.data().fullName || "Unknown";
+                            snippetData.author = userDoc.data().nickName || "Unknown";
                         }
                     }
 
-                    // Eklenmiş tarih formatı
+                    
                     if (snippetData.createdAt && snippetData.createdAt.seconds) {
                         snippetData.createdAt = new Date(snippetData.createdAt.seconds * 1000).toLocaleDateString();
                     }
@@ -41,7 +41,7 @@ const ExplorePageContents = () => {
                 }
 
                 setSnippets(fetchedSnippets);
-                setFilteredSnippets(fetchedSnippets); // İlk başta tüm snippet'leri göster
+                setFilteredSnippets(fetchedSnippets); 
             } catch (error) {
                 console.error("Error fetching snippets: ", error);
             } finally {
@@ -52,10 +52,10 @@ const ExplorePageContents = () => {
         fetchSnippets();
     }, []);
 
-    // Arama kutusundaki değişiklikleri izleme
+
     useEffect(() => {
         if (searchQuery.trim() === "") {
-            setFilteredSnippets(snippets); // Arama boşsa tüm snippet'leri göster
+            setFilteredSnippets(snippets); 
         } else {
             const query = searchQuery.toLowerCase();
             const filtered = snippets.filter(snippet =>
@@ -87,8 +87,8 @@ const ExplorePageContents = () => {
                 <Input
                     type="search"
                     placeholder="Search..."
-                    value={searchQuery} // Arama sorgusu
-                    onChange={(e) => setSearchQuery(e.target.value)} // Arama sorgusunu güncelle
+                    value={searchQuery} 
+                    onChange={(e) => setSearchQuery(e.target.value)} 
                     className="w-25 bg-white text-dark mx-4"
                     style={{
                         borderRadius: '20px',

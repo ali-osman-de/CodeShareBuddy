@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Button, Input, Form, FormGroup, Label, Card, CardBody } from "reactstrap";
+import { Container, Button, Input, Form, FormGroup, Label, Card, CardBody, Toast, ToastBody, ToastHeader } from "reactstrap";
 import { db } from "../../../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
@@ -17,6 +17,8 @@ const CreatePage = () => {
     });
 
     const [uploading, setUploading] = useState(false);
+    const [toast, setToast] = useState({ show: false, success: false, message: "" });
+
     const languages = ["JavaScript", "Python", "TypeScript", "Java", "C++", "Go"];
 
     const handleChange = (e) => {
@@ -32,40 +34,91 @@ const CreatePage = () => {
         setFormData((prevState) => ({ ...prevState, image: e.target.files[0] }));
     };
 
-    // Resmi base64 formatına dönüştürme
-    const convertToBase64 = (file) => {
+    const convertToBase64AndResize = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result); // reader.result -> Base64 verisi
+            reader.onload = () => {
+                const base64Data = reader.result;
+                const img = new Image();
+                img.src = base64Data;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxWidth = 500;
+                    const maxHeight = 500;
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Scale image
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL()); 
+                };
+                img.onerror = (error) => reject(error);
+            };
             reader.onerror = (error) => reject(error);
         });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!formData.title || !formData.description || !formData.image) {
+            setToast({
+                show: true,
+                success: false,
+                message: "Title, description, and image are required fields.",
+            });
+            setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 3000);
+            return;
+        }
+
         setUploading(true);
 
         try {
             let base64Image = "";
 
             if (formData.image) {
-                // Resmi Base64 formatına dönüştür
-                base64Image = await convertToBase64(formData.image);
+                base64Image = await convertToBase64AndResize(formData.image);
             }
 
-            // Firestore'a veri kaydet
             const snippetRef = collection(db, "snippets");
             await addDoc(snippetRef, {
                 ...formData,
                 uid,
-                image: base64Image, // Base64 formatında resmi veritabanına ekle
+                image: base64Image,
                 createdAt: new Date(),
             });
 
+            setToast({
+                show: true,
+                success: true,
+                message: "Snippet successfully created!",
+            });
+            setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 3000);
             console.log("Snippet successfully created!");
         } catch (error) {
             console.error("Error creating snippet:", error);
+            setToast({
+                show: true,
+                success: false,
+                message: "Error creating snippet, please try again.",
+            });
+            setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 3000);
         } finally {
             setUploading(false);
         }
@@ -77,6 +130,26 @@ const CreatePage = () => {
             <p className="text-muted">
                 <strong>Sharing is good!</strong> Here is the fastest and easiest way to share your code with the world. Paste your code into the editor below, select your programming language and click <strong>'Share'.</strong> Create a great snippet that everyone will benefit from!
             </p>
+
+            {/* Toast Notification */}
+            {toast.show && (
+                <div
+                    style={{
+                        position: "fixed",
+                        bottom: "20px",
+                        right: "20px",
+                        zIndex: 1050,
+                    }}
+                >
+                    <Toast isOpen={toast.show}>
+                        <ToastHeader color={toast.success ? "success" : "warning"}>
+                            {toast.success ? "Success" : "Error"}
+                        </ToastHeader>
+                        <ToastBody>{toast.message}</ToastBody>
+                    </Toast>
+                </div>
+            )}
+
             <Form onSubmit={handleSubmit}>
                 <FormGroup>
                     <Label for="title">Title</Label>
@@ -87,6 +160,7 @@ const CreatePage = () => {
                         placeholder="Enter title"
                         value={formData.title}
                         onChange={handleChange}
+                        required
                     />
                 </FormGroup>
 
@@ -100,6 +174,7 @@ const CreatePage = () => {
                         value={formData.description}
                         onChange={handleChange}
                         style={{ minHeight: "100px" }}
+                        required
                     />
                 </FormGroup>
 
@@ -137,7 +212,6 @@ const CreatePage = () => {
                     </Card>
                 </FormGroup>
 
-
                 {/* Resim Yükleme Input'u */}
                 <FormGroup>
                     <Label for="image">Image</Label>
@@ -146,6 +220,7 @@ const CreatePage = () => {
                         name="image"
                         id="image"
                         onChange={handleImageChange}
+                        required
                     />
                 </FormGroup>
 

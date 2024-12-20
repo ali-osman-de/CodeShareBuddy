@@ -1,11 +1,15 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../firebase"; 
+import { db } from "../../firebase";
 
-const RegisterUser = async (auth, email, password, fullName) => {
+const RegisterUser = async (auth, email, password, fullName, nickName) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
     await updateProfile(userCredential.user, {
       displayName: fullName,
     });
@@ -15,6 +19,7 @@ const RegisterUser = async (auth, email, password, fullName) => {
       uid: userCredential.user.uid,
       email: userCredential.user.email,
       fullName: fullName,
+      nickName: nickName,
       createdAt: new Date().toISOString(),
     });
 

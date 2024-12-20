@@ -33,7 +33,7 @@ const HomePageContents = () => {
 
             if (userDoc.exists()) {
               const userData = userDoc.data();
-              contentData.author = userData.fullName || 'Unknown';
+              contentData.author = userData.nickName || 'Unknown';
             }
           }
 
@@ -94,7 +94,7 @@ const HomePageContents = () => {
               <CardBody>
                 <CardSubtitle className="mb-2 text-muted fw-light">{content.programmingLanguage || 'Unknown'}</CardSubtitle>
                 <CardTitle className="fw-normal" tag="h4">{content.title}</CardTitle>
-                <CardText className="text-muted fw-light">{content.description}</CardText>
+                <CardText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }} className="text-muted fw-light">{content.description}</CardText>
                 <CardText className="text-muted fw-lighter">
                   Created by <span>@{content.author || 'Unknown'}</span> • {content.createdAt || 'N/A'}
                 </CardText>
