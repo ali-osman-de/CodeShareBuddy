@@ -33,7 +33,7 @@ const SharedCodes = () => {
         } catch (error) {
             console.error("Error fetching shared codes: ", error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -98,7 +98,13 @@ const SharedCodes = () => {
                                     {code.programmingLanguage}
                                 </CardSubtitle>
                                 <CardTitle className="fs-5 fw-semibold">{code.title}</CardTitle>
-                                <CardText className="text-muted fs-6 fw-light">{code.description}</CardText>
+                                <CardText style={{
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2, 
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                }} className="text-muted fs-6 fw-light">{code.description}</CardText>
                                 <Button className="bg-light text-dark border-0 fs-6 fw-light rounded-pill">
                                     Copy to clipboard
                                 </Button>
