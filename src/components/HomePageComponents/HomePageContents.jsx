@@ -94,7 +94,13 @@ const HomePageContents = () => {
               <CardBody>
                 <CardSubtitle className="mb-2 text-muted fw-light">{content.programmingLanguage || 'Unknown'}</CardSubtitle>
                 <CardTitle className="fw-normal" tag="h4">{content.title}</CardTitle>
-                <CardText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }} className="text-muted fw-light">{content.description}</CardText>
+                <CardText style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 5,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }} className="text-muted fw-light">{content.description}</CardText>
                 <CardText className="text-muted fw-lighter">
                   Created by <span>@{content.author || 'Unknown'}</span> • {content.createdAt || 'N/A'}
                 </CardText>
