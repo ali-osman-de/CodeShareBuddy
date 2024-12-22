@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Button, Input, Form, FormGroup, Label, Card, CardBody, Toast, ToastBody, ToastHeader } from "reactstrap";
 import { db } from "../../../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { Editor } from "@monaco-editor/react";
 
+
 const CreatePage = () => {
     const { uid } = useSelector((state) => state.auth);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [isEdit, setIsEdit] = useState(false);
+    const [docId, setDocId] = useState(null);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -49,7 +55,6 @@ const CreatePage = () => {
                     let width = img.width;
                     let height = img.height;
 
-                    // Scale image
                     if (width > height) {
                         if (width > maxWidth) {
                             height = (height * maxWidth) / width;
@@ -66,7 +71,7 @@ const CreatePage = () => {
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL()); 
+                    resolve(canvas.toDataURL());
                 };
                 img.onerror = (error) => reject(error);
             };
@@ -90,33 +95,54 @@ const CreatePage = () => {
         setUploading(true);
 
         try {
-            let base64Image = "";
+            let base64Image = formData.image;
 
-            if (formData.image) {
+            if (formData.image && typeof formData.image !== 'string') {
                 base64Image = await convertToBase64AndResize(formData.image);
             }
 
-            const snippetRef = collection(db, "snippets");
-            await addDoc(snippetRef, {
-                ...formData,
-                uid,
-                image: base64Image,
-                createdAt: new Date(),
-            });
+            if (isEdit && docId) {
+                const snippetRef = doc(db, "snippets", docId);
+                await updateDoc(snippetRef, {
+                    ...formData,
+                    uid,
+                    image: base64Image,
+                    updatedAt: new Date(),
+                });
 
-            setToast({
-                show: true,
-                success: true,
-                message: "Snippet successfully created!",
-            });
-            setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 3000);
-            console.log("Snippet successfully created!");
+                setToast({
+                    show: true,
+                    success: true,
+                    message: "Snippet successfully updated!",
+                });
+                console.log("Snippet successfully updated!");
+            } else {
+                const snippetRef = collection(db, "snippets");
+                await addDoc(snippetRef, {
+                    ...formData,
+                    uid,
+                    image: base64Image,
+                    createdAt: new Date(),
+                });
+
+                setToast({
+                    show: true,
+                    success: true,
+                    message: "Snippet successfully created!",
+                });
+                console.log("Snippet successfully created!");
+            }
+
+            setTimeout(() => {
+                setToast((prev) => ({ ...prev, show: false }));
+                navigate("/profile");
+            }, 3000);
         } catch (error) {
-            console.error("Error creating snippet:", error);
+            console.error("Error creating/updating snippet:", error);
             setToast({
                 show: true,
                 success: false,
-                message: "Error creating snippet, please try again.",
+                message: "Error creating/updating snippet, please try again.",
             });
             setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 3000);
         } finally {
@@ -124,9 +150,17 @@ const CreatePage = () => {
         }
     };
 
+    useEffect(() => {
+        if (location.state && location.state.code) {
+            setFormData(location.state.code);
+            setIsEdit(location.state.isEdit || false);
+            setDocId(location.state.code.id || null);
+        }
+    }, [location.state]);
+
     return (
         <Container style={{ maxWidth: "800px" }}>
-            <h2 className="mb-3">New Snippet</h2>
+            <h2 className="mb-3">{isEdit ? "Edit Snippet" : "New Snippet"}</h2>
             <p className="text-muted">
                 <strong>Sharing is good!</strong> Here is the fastest and easiest way to share your code with the world. Paste your code into the editor below, select your programming language and click <strong>'Share'.</strong> Create a great snippet that everyone will benefit from!
             </p>
@@ -235,7 +269,7 @@ const CreatePage = () => {
                     }}
                     disabled={uploading}
                 >
-                    {uploading ? "Uploading..." : "Share"}
+                    {uploading ? "Uploading..." : isEdit ? "Update" : "Share"}
                 </Button>
             </Form>
         </Container>
