@@ -111,18 +111,6 @@ const ContentPost = () => {
                   }}
                 />
               </CardBody>
-              <CardBody className="mt-5 bg-light" style={{ borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", overflow: "hidden" }}>
-                <h3>Preview Screen</h3>
-                <iframe
-                  srcDoc={output}
-                  title="output"
-                  sandbox="allow-scripts"
-                  frameBorder="0"
-                  width="100%"
-                  height="400px"
-                  style={{ border: "5px dotted red", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
-                />
-              </CardBody>
             </CardBody>
             <CardBody className="mb-5">
               <div className="d-flex justify-content-between fs-6 fw-normal">
