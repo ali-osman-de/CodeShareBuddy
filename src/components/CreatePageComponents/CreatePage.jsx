@@ -6,10 +6,15 @@ import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { Editor } from "@monaco-editor/react";
 
+
 const CreatePage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { uid } = useSelector((state) => state.auth);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [isEdit, setIsEdit] = useState(false);
+    const [docId, setDocId] = useState(null);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -62,7 +67,6 @@ const CreatePage = () => {
                     let width = img.width;
                     let height = img.height;
 
-                    // Scale image
                     if (width > height) {
                         if (width > maxWidth) {
                             height = (height * maxWidth) / width;
@@ -79,7 +83,7 @@ const CreatePage = () => {
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL()); 
+                    resolve(canvas.toDataURL());
                 };
                 img.onerror = (error) => reject(error);
             };
@@ -143,7 +147,9 @@ const CreatePage = () => {
 
             setTimeout(() => {
                 setToast((prev) => ({ ...prev, show: false }));
-                navigate("/shared-codes");
+
+                navigate("/profile");
+
             }, 3000);
         } catch (error) {
             console.error("Error creating/updating snippet:", error);
@@ -157,6 +163,14 @@ const CreatePage = () => {
             setUploading(false);
         }
     };
+
+    useEffect(() => {
+        if (location.state && location.state.code) {
+            setFormData(location.state.code);
+            setIsEdit(location.state.isEdit || false);
+            setDocId(location.state.code.id || null);
+        }
+    }, [location.state]);
 
     return (
         <Container style={{ maxWidth: "800px" }}>

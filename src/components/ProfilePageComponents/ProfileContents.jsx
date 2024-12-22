@@ -11,7 +11,7 @@ const ProfileContents = () => {
         switch (activeTab) {
             case 'shared':
                 return <SharedCodes />
-            case 'comments':
+            case 'likes':
                 return <LikedCodes />
             case 'profile':
                 return <ProfileInformation />
@@ -34,10 +34,10 @@ const ProfileContents = () => {
                 </ListGroupItem>
                 <ListGroupItem
                     action
-                    onClick={() => setActiveTab('comments')}
-                    active={activeTab === 'comments'}
+                    onClick={() => setActiveTab('likes')}
+                    active={activeTab === 'likes'}
                     tag="a"
-                    className={`d-flex align-items-center justify-content-center fs-small fw-semibold border-0 text-center ${activeTab === 'comments' ? 'bg-secondary' : ''}`}
+                    className={`d-flex align-items-center justify-content-center fs-small fw-semibold border-0 text-center ${activeTab === 'likes' ? 'bg-secondary' : ''}`}
                 >
                     <span>Liked Codes</span>
                 </ListGroupItem>

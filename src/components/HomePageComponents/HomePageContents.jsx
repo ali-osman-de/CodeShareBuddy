@@ -1,33 +1,16 @@
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  CardText,
-  Row,
-  Col,
-  Spinner,
-  Button,
-} from "reactstrap";
-import { useNavigate } from "react-router-dom";
-import { db } from "../../../firebase";
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
-import { useSelector } from "react-redux";
-import { FaHeart, FaRegHeart } from "react-icons/fa"; // Importing like icons
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardBody, CardTitle, CardSubtitle, CardText, Row, Col, Spinner, Button } from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
+import { auth, db } from "../../../firebase";
+import { collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const HomePageContents = () => {
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [likedContents, setLikedContents] = useState({});
+  const [likedContents, setLikedContents] = useState({}); 
+
   const navigate = useNavigate();
   const { uid } = useSelector((state) => state.auth);
 
@@ -62,12 +45,24 @@ const HomePageContents = () => {
         }
 
         setContents(fetchedContents);
-        const initialLikedContents = {};
-        fetchedContents.forEach((content) => {
-          initialLikedContents[content.id] =
-            content.likes?.includes(uid) || false;
-        });
-        setLikedContents(initialLikedContents);
+
+
+        const user = auth.currentUser;
+        if (user) {
+          const likedContentsMap = {};
+          for (const content of fetchedContents) {
+            const postRef = doc(db, "snippets", content.id);
+            const postDoc = await getDoc(postRef);
+            const postData = postDoc.data();
+
+            if (postData.likes && postData.likes.includes(user.uid)) {
+              likedContentsMap[content.id] = true;
+            } else {
+              likedContentsMap[content.id] = false;
+            }
+          }
+          setLikedContents(likedContentsMap);
+        }
         setLoading(false);
       } catch (error) {
         console.error("Error fetching content: ", error);
@@ -92,23 +87,49 @@ const HomePageContents = () => {
         });
       }
 
-      setLikedContents((prevState) => ({
-        ...prevState,
-        [contentId]: !isLiked,
-      }));
-    } catch (error) {
-      console.error("Error updating like status:", error);
+
+  const handleLike = async (postId) => {
+    const user = auth.currentUser;
+
+    if (user) {
+      const userId = user.uid;
+      const postRef = doc(db, "snippets", postId);
+
+      try {
+        const postDoc = await getDoc(postRef);
+        const postData = postDoc.data();
+
+        if (postData.likes && postData.likes.includes(userId)) {
+          // If the user already liked it, remove the like
+          await updateDoc(postRef, {
+            likes: arrayRemove(userId),
+          });
+          setLikedContents((prev) => ({
+            ...prev,
+            [postId]: false,
+          }));
+        } else {
+
+          await updateDoc(postRef, {
+            likes: arrayUnion(userId),
+          });
+          setLikedContents((prev) => ({
+            ...prev,
+            [postId]: true,
+          }));
+        }
+      } catch (error) {
+        console.error("Beğeni kaydedilemedi: ", error);
+      }
+    } else {
+      console.log("Lütfen oturum açın.");
     }
   };
 
   if (loading) {
     return (
-      <div
-        style={{
-          height: "50vh",
-        }}
-        className="d-flex justify-content-center align-items-center loading-spinner-container"
-      >
+
+      <div style={{ height: "50vh" }} className="d-flex justify-content-center align-items-center loading-spinner-container">
         <Spinner className="m-5" color="secondary">
           Loading...
         </Spinner>
@@ -145,19 +166,16 @@ const HomePageContents = () => {
             </Col>
             <Col md="6">
               <CardBody>
-                <CardSubtitle className="mb-2 text-muted fw-light">
-                  {content.programmingLanguage || "Unknown"}
-                </CardSubtitle>
-                <CardTitle className="fw-normal" tag="h4">
-                  {content.title}
-                </CardTitle>
+                <CardSubtitle className="mb-2 text-muted fw-light">{content.programmingLanguage || 'Unknown'}</CardSubtitle>
+                <CardTitle className="fw-normal" tag="h4">{content.title}</CardTitle>
                 <CardText
                   style={{
-                    display: "-webkit-box",
-                    WebkitLineClamp: 4,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    display: '-webkit-box',
+                    WebkitLineClamp: 5,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+
                   }}
                   className="text-muted fw-light"
                 >
@@ -168,16 +186,13 @@ const HomePageContents = () => {
                   {content.createdAt || "N/A"}
                 </CardText>
                 <Button
-                  className={`bg-light border-0 fs-6 fw-light rounded-pill ${
-                    likedContents[content.id] ? "text-danger" : "text-dark"
-                  }`}
+                  className={`bg-light border-0 fs-6 fw-light rounded-pill ${likedContents[content.id] ? 'text-danger' : 'text-dark'}`}
                   onClick={(e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); 
                     handleLike(content.id);
                   }}
                 >
-                  {likedContents[content.id] ? <FaHeart /> : <FaRegHeart />}{" "}
-                  Like
+                  {likedContents[content.id] ? <FaHeart /> : <FaRegHeart />} Like
                 </Button>
               </CardBody>
             </Col>
