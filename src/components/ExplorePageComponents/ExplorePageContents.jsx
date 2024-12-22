@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Input, Spinner } from 'reactstrap';
+import { Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Input, Spinner, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
-import { db } from "../../../firebase";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { db, auth } from "../../../firebase"; // auth import
+import { collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const ExplorePageContents = () => {
     const [hoveredCard, setHoveredCard] = useState(null);
@@ -10,6 +11,7 @@ const ExplorePageContents = () => {
     const [filteredSnippets, setFilteredSnippets] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
+    const [likedSnippets, setLikedSnippets] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,7 +25,6 @@ const ExplorePageContents = () => {
                     const snippetData = docSnap.data();
                     const snippetId = docSnap.id;
 
-
                     if (snippetData.uid) {
                         const userDocRef = doc(db, "users", snippetData.uid);
                         const userDoc = await getDoc(userDocRef);
@@ -32,16 +33,31 @@ const ExplorePageContents = () => {
                         }
                     }
 
-
                     if (snippetData.createdAt && snippetData.createdAt.seconds) {
                         snippetData.createdAt = new Date(snippetData.createdAt.seconds * 1000).toLocaleDateString();
                     }
 
-                    fetchedSnippets.push({ ...snippetData, id: snippetId });
+                    // Fetch likes from Firestore
+                    const snippetDocRef = doc(db, "snippets", snippetId);
+                    const snippetDoc = await getDoc(snippetDocRef);
+                    const snippetLikes = snippetDoc.exists() ? snippetDoc.data().likes || [] : [];
+                    fetchedSnippets.push({ ...snippetData, id: snippetId, likes: snippetLikes });
                 }
 
                 setSnippets(fetchedSnippets);
                 setFilteredSnippets(fetchedSnippets);
+
+                // Initialize likedSnippets with fetched like data
+                const likedMap = {};
+                fetchedSnippets.forEach((snippet) => {
+                    const user = auth.currentUser;
+                    if (user && snippet.likes.includes(user.uid)) {
+                        likedMap[snippet.id] = true;
+                    } else {
+                        likedMap[snippet.id] = false;
+                    }
+                });
+                setLikedSnippets(likedMap);
             } catch (error) {
                 console.error("Error fetching snippets: ", error);
             } finally {
@@ -51,7 +67,6 @@ const ExplorePageContents = () => {
 
         fetchSnippets();
     }, []);
-
 
     useEffect(() => {
         if (searchQuery.trim() === "") {
@@ -67,6 +82,46 @@ const ExplorePageContents = () => {
             setFilteredSnippets(filtered);
         }
     }, [searchQuery, snippets]);
+
+    const handleLike = async (snippetId) => {
+        const user = auth.currentUser;
+
+        if (user) {
+            const userId = user.uid;
+            const snippetRef = doc(db, "snippets", snippetId);
+
+            try {
+                // Fetch the current likes for the snippet
+                const snippetDoc = await getDoc(snippetRef);
+                const snippetData = snippetDoc.data();
+                const likes = snippetData.likes || [];
+
+                if (likes.includes(userId)) {
+                    // If user already liked, remove the like
+                    await updateDoc(snippetRef, {
+                        likes: arrayRemove(userId), // Removing userId from likes array
+                    });
+                    setLikedSnippets((prev) => ({
+                        ...prev,
+                        [snippetId]: false, // Update state to reflect unliked status
+                    }));
+                } else {
+                    // If user hasn't liked, add the like
+                    await updateDoc(snippetRef, {
+                        likes: arrayUnion(userId), // Adding userId to likes array
+                    });
+                    setLikedSnippets((prev) => ({
+                        ...prev,
+                        [snippetId]: true, // Update state to reflect liked status
+                    }));
+                }
+            } catch (error) {
+                console.error("Error updating likes: ", error);
+            }
+        } else {
+            console.log("Please log in.");
+        }
+    };
 
     if (loading) {
         return (
@@ -101,31 +156,38 @@ const ExplorePageContents = () => {
                 {filteredSnippets.length > 0 ? (
                     filteredSnippets.map((snippet, index) => (
                         <Col xs="4" key={snippet.id} className="mb-4">
-                            <Card style={{
-                                maxHeight: "300px"
-                            }} className="position-relative"
+                            <Card
+                                style={{
+                                    maxHeight: "300px"
+                                }}
+                                className="position-relative"
                                 onMouseEnter={() => setHoveredCard(index)}
                                 onMouseLeave={() => setHoveredCard(null)}
-                                onClick={() => navigate(`/content/${snippet.id}`)}>
+                                onClick={() => navigate(`/content/${snippet.id}`)}
+                            >
                                 <CardImg
                                     style={{
                                         height: "200px",
-                                        objectFit: "100%"
+                                        objectFit: "cover"
                                     }}
                                     top
                                     width="100%"
                                     src={snippet.image || "https://picsum.photos/400/300"}
                                     alt="Snippet preview"
                                 />
-                                <CardBody className={`position-absolute w-100 h-100 top-0 start-0 bg-dark bg-opacity-75 text-white transition-opacity ${hoveredCard === index ? 'opacity-100' : 'opacity-0'}`}
-                                    style={{ transition: 'opacity 0.3s ease' }}>
-                                    <CardTitle tag="h4" style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>{snippet.title || "Untitled Snippet"}</CardTitle>
+                                <CardBody
+                                    className={`position-absolute w-100 h-100 top-0 start-0 bg-dark bg-opacity-75 text-white transition-opacity ${hoveredCard === index ? 'opacity-100' : 'opacity-0'}`}
+                                    style={{ transition: 'opacity 0.3s ease' }}
+                                >
+                                    <CardTitle tag="h4" style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
+                                        {snippet.title || "Untitled Snippet"}
+                                    </CardTitle>
                                     <CardSubtitle className="mb-2 text-warning">
                                         {snippet.programmingLanguage || "Unknown Category"}
                                     </CardSubtitle>
                                     <CardText style={{
                                         display: '-webkit-box',
-                                        WebkitLineClamp: 3,
+                                        WebkitLineClamp: 2,
                                         WebkitBoxOrient: 'vertical',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis'
@@ -136,6 +198,17 @@ const ExplorePageContents = () => {
                                         <small>@{snippet.author || "Unknown"}</small>
                                         <small>{snippet.createdAt || "N/A"}</small>
                                     </div>
+
+                                    {/* Like Button */}
+                                    <Button
+                                        className={`mt-2 bg-transparent border-2 rounded-5 text-white ${likedSnippets[snippet.id] ? 'text-danger' : 'text-dark'}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleLike(snippet.id);
+                                        }}
+                                    >
+                                        {likedSnippets[snippet.id] ? <FaHeart /> : <FaRegHeart />} Like
+                                    </Button>
                                 </CardBody>
                             </Card>
                         </Col>
