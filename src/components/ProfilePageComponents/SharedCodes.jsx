@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+
     Button,
     Card,
     CardBody,
@@ -130,6 +131,59 @@ const SharedCodes = () => {
             </div>
         );
     }
+  };
+
+  const fetchSharedCodes = async () => {
+    try {
+      const snippetRef = collection(db, "snippets");
+      const q = query(snippetRef, where("uid", "==", uid));
+      const querySnapshot = await getDocs(q);
+      const codes = [];
+
+      querySnapshot.forEach((doc) => {
+        codes.push({ ...doc.data(), id: doc.id });
+      });
+
+      setSharedCodes(codes);
+      setTotalPages(Math.ceil(codes.length / codesPerPage));
+    } catch (error) {
+      console.error("Error fetching shared codes: ", error);
+    } finally {
+      setLoading(false); // Loading durdur
+    }
+  };
+
+  useEffect(() => {
+    fetchSharedCodes();
+  }, [uid]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const currentCodes = sharedCodes.slice(
+    (currentPage - 1) * codesPerPage,
+    currentPage * codesPerPage
+  );
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        alert("Copied to clipboard!");
+      },
+      (err) => {
+        console.error("Could not copy text: ", err);
+      }
+    );
+  };
+
+  const toggleDropdown = (id) => {
+    setDropdownOpen((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
+  };
+
 
     if (!loading && sharedCodes.length === 0) {
         return (
@@ -137,7 +191,14 @@ const SharedCodes = () => {
                 style={{
                     height: "50vh",
                 }}
-                className="d-flex justify-content-center align-items-center"
+                src={code.image}
+                className="img-fluid rounded-5"
+              />
+            </Col>
+            <Col
+              xs="1"
+              className="d-flex justify-content-end align-items-start"
+              style={{ alignSelf: "flex-start" }}
             >
                 <h5 className="text-muted">Hiç kod paylaşımınız yok.</h5>
             </div>

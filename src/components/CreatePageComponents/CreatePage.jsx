@@ -8,6 +8,8 @@ import { Editor } from "@monaco-editor/react";
 
 
 const CreatePage = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const { uid } = useSelector((state) => state.auth);
     const location = useLocation();
     const navigate = useNavigate();
@@ -24,8 +26,18 @@ const CreatePage = () => {
 
     const [uploading, setUploading] = useState(false);
     const [toast, setToast] = useState({ show: false, success: false, message: "" });
+    const [isEdit, setIsEdit] = useState(false);
+    const [docId, setDocId] = useState(null);
 
     const languages = ["JavaScript", "Python", "TypeScript", "Java", "C++", "Go"];
+
+    useEffect(() => {
+        if (location.state && location.state.code) {
+            setFormData(location.state.code);
+            setIsEdit(location.state.isEdit || false);
+            setDocId(location.state.code.id || null);
+        }
+    }, [location.state]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -82,11 +94,11 @@ const CreatePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.title || !formData.description || !formData.image) {
+        if (!formData.title || !formData.description) {
             setToast({
                 show: true,
                 success: false,
-                message: "Title, description, and image are required fields.",
+                message: "Title and description are required fields.",
             });
             setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 3000);
             return;
@@ -135,7 +147,9 @@ const CreatePage = () => {
 
             setTimeout(() => {
                 setToast((prev) => ({ ...prev, show: false }));
+
                 navigate("/profile");
+
             }, 3000);
         } catch (error) {
             console.error("Error creating/updating snippet:", error);
@@ -254,7 +268,6 @@ const CreatePage = () => {
                         name="image"
                         id="image"
                         onChange={handleImageChange}
-                        required
                     />
                 </FormGroup>
 

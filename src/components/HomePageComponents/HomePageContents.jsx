@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardTitle, CardSubtitle, CardText, Row, Col, Spinner, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +10,9 @@ const HomePageContents = () => {
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [likedContents, setLikedContents] = useState({}); 
+
   const navigate = useNavigate();
+  const { uid } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchContents = async () => {
@@ -23,7 +26,9 @@ const HomePageContents = () => {
           const contentId = docSnap.id;
 
           if (contentData.createdAt && contentData.createdAt.seconds) {
-            contentData.createdAt = new Date(contentData.createdAt.seconds * 1000).toLocaleDateString();
+            contentData.createdAt = new Date(
+              contentData.createdAt.seconds * 1000
+            ).toLocaleDateString();
           }
 
           if (contentData.uid) {
@@ -32,7 +37,7 @@ const HomePageContents = () => {
 
             if (userDoc.exists()) {
               const userData = userDoc.data();
-              contentData.author = userData.nickName || 'Unknown';
+              contentData.author = userData.nickName || "Unknown";
             }
           }
 
@@ -40,6 +45,7 @@ const HomePageContents = () => {
         }
 
         setContents(fetchedContents);
+
 
         const user = auth.currentUser;
         if (user) {
@@ -57,7 +63,6 @@ const HomePageContents = () => {
           }
           setLikedContents(likedContentsMap);
         }
-
         setLoading(false);
       } catch (error) {
         console.error("Error fetching content: ", error);
@@ -65,7 +70,23 @@ const HomePageContents = () => {
     };
 
     fetchContents();
-  }, []);
+  }, [uid]);
+
+  const handleLike = async (contentId) => {
+    try {
+      const contentRef = doc(db, "snippets", contentId);
+      const isLiked = likedContents[contentId];
+
+      if (isLiked) {
+        await updateDoc(contentRef, {
+          likes: arrayRemove(uid),
+        });
+      } else {
+        await updateDoc(contentRef, {
+          likes: arrayUnion(uid),
+        });
+      }
+
 
   const handleLike = async (postId) => {
     const user = auth.currentUser;
@@ -107,6 +128,7 @@ const HomePageContents = () => {
 
   if (loading) {
     return (
+
       <div style={{ height: "50vh" }} className="d-flex justify-content-center align-items-center loading-spinner-container">
         <Spinner className="m-5" color="secondary">
           Loading...
@@ -153,13 +175,15 @@ const HomePageContents = () => {
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
+
                   }}
                   className="text-muted fw-light"
                 >
                   {content.description}
                 </CardText>
                 <CardText className="text-muted fw-lighter">
-                  Created by <span>@{content.author || 'Unknown'}</span> • {content.createdAt || 'N/A'}
+                  Created by <span>@{content.author || "Unknown"}</span> •{" "}
+                  {content.createdAt || "N/A"}
                 </CardText>
                 <Button
                   className={`bg-light border-0 fs-6 fw-light rounded-pill ${likedContents[content.id] ? 'text-danger' : 'text-dark'}`}

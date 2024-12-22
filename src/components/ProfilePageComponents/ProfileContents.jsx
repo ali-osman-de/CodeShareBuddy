@@ -39,7 +39,7 @@ const ProfileContents = () => {
                     tag="a"
                     className={`d-flex align-items-center justify-content-center fs-small fw-semibold border-0 text-center ${activeTab === 'likes' ? 'bg-secondary' : ''}`}
                 >
-                    <span>Received Comments</span>
+                    <span>Liked Codes</span>
                 </ListGroupItem>
                 <ListGroupItem
                     action

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Input, Spinner, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
@@ -134,8 +135,11 @@ const ExplorePageContents = () => {
             </div>
         );
     }
+  };
 
+  if (loading) {
     return (
+
         <Row>
             <Col xs="12" className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Explore</h2>
@@ -221,6 +225,70 @@ const ExplorePageContents = () => {
             </Row>
         </Row>
     );
+  }
+
+  return (
+    <>
+      {filteredSnippets.map((snippet) => (
+        <Card
+          key={snippet.id}
+          className="mb-5 border-1 rounded-4"
+          style={{
+            maxHeight: "300px",
+          }}
+          onClick={() => navigate(`/content/${snippet.id}`)}
+        >
+          <Row className="d-flex align-items-start">
+            <Col md="6">
+              <img
+                style={{
+                  height: "300px",
+                  objectFit: "100%",
+                }}
+                src={snippet.image || "https://picsum.photos/600/300"}
+                alt="Card image"
+                className="img-fluid rounded-4 object-fit-cover"
+              />
+            </Col>
+            <Col md="6">
+              <CardBody>
+                <CardSubtitle className="mb-1 text-muted fs-6 fw-light">
+                  {snippet.programmingLanguage}
+                </CardSubtitle>
+                <CardTitle className="fs-5 fw-semibold">
+                  {snippet.title}
+                </CardTitle>
+                <CardText
+                  style={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                  className="text-muted fs-6 fw-light"
+                >
+                  {snippet.description}
+                </CardText>
+                <Button
+                  className={`bg-light border-0 fs-6 fw-light rounded-pill ${
+                    likedSnippets[snippet.id] ? "text-danger" : "text-dark"
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLike(snippet.id);
+                  }}
+                >
+                  {likedSnippets[snippet.id] ? <FaHeart /> : <FaRegHeart />}{" "}
+                  Like
+                </Button>
+              </CardBody>
+            </Col>
+          </Row>
+        </Card>
+      ))}
+    </>
+  );
 };
 
 export default ExplorePageContents;
