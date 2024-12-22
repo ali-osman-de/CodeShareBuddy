@@ -1,15 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardTitle, CardSubtitle, CardText, Row, Col, Spinner, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from "../../../firebase";
 import { collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const HomePageContents = () => {
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [likedContents, setLikedContents] = useState({}); 
+  const [likedContents, setLikedContents] = useState({});
 
   const navigate = useNavigate();
   const { uid } = useSelector((state) => state.auth);
@@ -72,57 +72,42 @@ const HomePageContents = () => {
     fetchContents();
   }, [uid]);
 
+
   const handleLike = async (contentId) => {
-    try {
-      const contentRef = doc(db, "snippets", contentId);
-      const isLiked = likedContents[contentId];
-
-      if (isLiked) {
-        await updateDoc(contentRef, {
-          likes: arrayRemove(uid),
-        });
-      } else {
-        await updateDoc(contentRef, {
-          likes: arrayUnion(uid),
-        });
-      }
-
-
-  const handleLike = async (postId) => {
     const user = auth.currentUser;
 
     if (user) {
       const userId = user.uid;
-      const postRef = doc(db, "snippets", postId);
+      const contentRef = doc(db, "snippets", contentId);
 
       try {
-        const postDoc = await getDoc(postRef);
-        const postData = postDoc.data();
+        const contentDoc = await getDoc(contentRef);
+        const contentData = contentDoc.data();
 
-        if (postData.likes && postData.likes.includes(userId)) {
+        if (contentData.likes && contentData.likes.includes(userId)) {
           // If the user already liked it, remove the like
-          await updateDoc(postRef, {
+          await updateDoc(contentRef, {
             likes: arrayRemove(userId),
           });
           setLikedContents((prev) => ({
             ...prev,
-            [postId]: false,
+            [contentId]: false,
           }));
         } else {
-
-          await updateDoc(postRef, {
+          // If the user hasn't liked it, add the like
+          await updateDoc(contentRef, {
             likes: arrayUnion(userId),
           });
           setLikedContents((prev) => ({
             ...prev,
-            [postId]: true,
+            [contentId]: true,
           }));
         }
       } catch (error) {
-        console.error("Beğeni kaydedilemedi: ", error);
+        console.error("Failed to update like status: ", error);
       }
     } else {
-      console.log("Lütfen oturum açın.");
+      console.log("Please log in.");
     }
   };
 
@@ -188,7 +173,7 @@ const HomePageContents = () => {
                 <Button
                   className={`bg-light border-0 fs-6 fw-light rounded-pill ${likedContents[content.id] ? 'text-danger' : 'text-dark'}`}
                   onClick={(e) => {
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     handleLike(content.id);
                   }}
                 >
