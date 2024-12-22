@@ -15,26 +15,25 @@ import { db } from "../../../firebase";
 import {
   collection,
   query,
+  where,
   getDocs,
   doc,
   updateDoc,
-  arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
-import { FaHeart, FaRegHeart } from "react-icons/fa"; // Importing like icons
+import { FaHeart } from "react-icons/fa"; // Importing like icon
 
-const ExplorePageContents = () => {
+const LikedCodes = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [filteredSnippets, setFilteredSnippets] = useState([]);
-  const [likedSnippets, setLikedSnippets] = useState({});
+  const [likedSnippets, setLikedSnippets] = useState([]);
   const { uid } = useSelector((state) => state.auth);
 
-  const fetchSnippets = async () => {
+  const fetchLikedSnippets = async () => {
     try {
       const snippetRef = collection(db, "snippets");
-      const q = query(snippetRef);
+      const q = query(snippetRef, where("likes", "array-contains", uid));
       const querySnapshot = await getDocs(q);
       const snippets = [];
 
@@ -42,43 +41,28 @@ const ExplorePageContents = () => {
         snippets.push({ ...doc.data(), id: doc.id });
       });
 
-      setFilteredSnippets(snippets);
-      const initialLikedSnippets = {};
-      snippets.forEach((snippet) => {
-        initialLikedSnippets[snippet.id] =
-          snippet.likes?.includes(uid) || false;
-      });
-      setLikedSnippets(initialLikedSnippets);
+      setLikedSnippets(snippets);
     } catch (error) {
-      console.error("Error fetching snippets: ", error);
+      console.error("Error fetching liked snippets: ", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchSnippets();
-  }, []);
+    fetchLikedSnippets();
+  }, [uid]);
 
-  const handleLike = async (snippetId) => {
+  const handleUnlike = async (snippetId) => {
     try {
       const snippetRef = doc(db, "snippets", snippetId);
-      const isLiked = likedSnippets[snippetId];
+      await updateDoc(snippetRef, {
+        likes: arrayRemove(uid),
+      });
 
-      if (isLiked) {
-        await updateDoc(snippetRef, {
-          likes: arrayRemove(uid),
-        });
-      } else {
-        await updateDoc(snippetRef, {
-          likes: arrayUnion(uid),
-        });
-      }
-
-      setLikedSnippets((prevState) => ({
-        ...prevState,
-        [snippetId]: !isLiked,
-      }));
+      setLikedSnippets((prevState) =>
+        prevState.filter((snippet) => snippet.id !== snippetId)
+      );
     } catch (error) {
       console.error("Error updating like status:", error);
     }
@@ -101,7 +85,7 @@ const ExplorePageContents = () => {
 
   return (
     <>
-      {filteredSnippets.map((snippet) => (
+      {likedSnippets.map((snippet) => (
         <Card
           key={snippet.id}
           className="mb-5 border-1 rounded-4"
@@ -143,16 +127,13 @@ const ExplorePageContents = () => {
                   {snippet.description}
                 </CardText>
                 <Button
-                  className={`bg-light border-0 fs-6 fw-light rounded-pill ${
-                    likedSnippets[snippet.id] ? "text-danger" : "text-dark"
-                  }`}
+                  className="bg-light border-0 fs-6 fw-light rounded-pill text-danger"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleLike(snippet.id);
+                    handleUnlike(snippet.id);
                   }}
                 >
-                  {likedSnippets[snippet.id] ? <FaHeart /> : <FaRegHeart />}{" "}
-                  Like
+                  <FaHeart /> Like
                 </Button>
               </CardBody>
             </Col>
@@ -163,4 +144,4 @@ const ExplorePageContents = () => {
   );
 };
 
-export default ExplorePageContents;
+export default LikedCodes;

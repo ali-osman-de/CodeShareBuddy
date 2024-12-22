@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ListGroup, ListGroupItem } from 'reactstrap'
 import SharedCodes from './SharedCodes'
-import ReceivedComments from './ReceivedComments'
+import LikedCodes from './LikedCodes'
 import ProfileInformation from './ProfileInformation'
 
 const ProfileContents = () => {
@@ -12,7 +12,7 @@ const ProfileContents = () => {
             case 'shared':
                 return <SharedCodes />
             case 'comments':
-                return <ReceivedComments />
+                return <LikedCodes />
             case 'profile':
                 return <ProfileInformation />
             default:
@@ -39,7 +39,7 @@ const ProfileContents = () => {
                     tag="a"
                     className={`d-flex align-items-center justify-content-center fs-small fw-semibold border-0 text-center ${activeTab === 'comments' ? 'bg-secondary' : ''}`}
                 >
-                    <span>Received Comments</span>
+                    <span>Liked Codes</span>
                 </ListGroupItem>
                 <ListGroupItem
                     action
