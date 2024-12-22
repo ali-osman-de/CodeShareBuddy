@@ -154,7 +154,7 @@ const HomePageContents = () => {
                 <CardText
                   style={{
                     display: "-webkit-box",
-                    WebkitLineClamp: 5,
+                    WebkitLineClamp: 4,
                     WebkitBoxOrient: "vertical",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -166,6 +166,7 @@ const HomePageContents = () => {
                 <CardText className="text-muted fw-lighter">
                   Created by <span>@{content.author || "Unknown"}</span> •{" "}
                   {content.createdAt || "N/A"}
+                </CardText>
                 <Button
                   className={`bg-light border-0 fs-6 fw-light rounded-pill ${
                     likedContents[content.id] ? "text-danger" : "text-dark"
@@ -178,7 +179,6 @@ const HomePageContents = () => {
                   {likedContents[content.id] ? <FaHeart /> : <FaRegHeart />}{" "}
                   Like
                 </Button>
-                </CardText>
               </CardBody>
             </Col>
           </Row>
