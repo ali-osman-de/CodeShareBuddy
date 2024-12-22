@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Input, Spinner, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
@@ -136,156 +135,91 @@ const ExplorePageContents = () => {
         );
     }
 
-
-    if (loading) {
-        return (
-            <Row>
-                <Col xs="12" className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>Explore</h2>
-                    <Input
-                        type="search"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-25 bg-white text-dark mx-4"
-                        style={{
-                            borderRadius: '20px',
-                            padding: '8px 16px'
-                        }}
-                    />
-                </Col>
-
-                <Row className="mt-4">
-                    {filteredSnippets.length > 0 ? (
-                        filteredSnippets.map((snippet, index) => (
-                            <Col xs="4" key={snippet.id} className="mb-4">
-                                <Card
-                                    style={{
-                                        maxHeight: "300px"
-                                    }}
-                                    className="position-relative"
-                                    onMouseEnter={() => setHoveredCard(index)}
-                                    onMouseLeave={() => setHoveredCard(null)}
-                                    onClick={() => navigate(`/content/${snippet.id}`)}
-                                >
-                                    <CardImg
-                                        style={{
-                                            height: "200px",
-                                            objectFit: "cover"
-                                        }}
-                                        top
-                                        width="100%"
-                                        src={snippet.image || "https://picsum.photos/400/300"}
-                                        alt="Snippet preview"
-                                    />
-                                    <CardBody
-                                        className={`position-absolute w-100 h-100 top-0 start-0 bg-dark bg-opacity-75 text-white transition-opacity ${hoveredCard === index ? 'opacity-100' : 'opacity-0'}`}
-                                        style={{ transition: 'opacity 0.3s ease' }}
-                                    >
-                                        <CardTitle tag="h4" style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
-                                            {snippet.title || "Untitled Snippet"}
-                                        </CardTitle>
-                                        <CardSubtitle className="mb-2 text-warning">
-                                            {snippet.programmingLanguage || "Unknown Category"}
-                                        </CardSubtitle>
-                                        <CardText style={{
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis'
-                                        }}>
-                                            {snippet.description || "No description provided..."}
-                                        </CardText>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <small>@{snippet.author || "Unknown"}</small>
-                                            <small>{snippet.createdAt || "N/A"}</small>
-                                        </div>
-
-                                        {/* Like Button */}
-                                        <Button
-                                            className={`mt-2 bg-transparent border-2 rounded-5 text-white ${likedSnippets[snippet.id] ? 'text-danger' : 'text-dark'}`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleLike(snippet.id);
-                                            }}
-                                        >
-                                            {likedSnippets[snippet.id] ? <FaHeart /> : <FaRegHeart />} Like
-                                        </Button>
-                                    </CardBody>
-                                </Card>
-                            </Col>
-                        ))
-                    ) : (
-                        <Col xs="12">
-                            <p className="text-center text-muted">No results found for "{searchQuery}".</p>
-                        </Col>
-                    )}
-                </Row>
-            </Row>
-        );
-    }
-
     return (
-        <>
-            {filteredSnippets.map((snippet) => (
-                <Card
-                    key={snippet.id}
-                    className="mb-5 border-1 rounded-4"
+        <Row>
+            <Col xs="12" className="d-flex justify-content-between align-items-center mb-4">
+                <h2>Explore</h2>
+                <Input
+                    type="search"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-25 bg-white text-dark mx-4"
                     style={{
-                        maxHeight: "300px",
+                        borderRadius: '20px',
+                        padding: '8px 16px'
                     }}
-                    onClick={() => navigate(`/content/${snippet.id}`)}
-                >
-                    <Row className="d-flex align-items-start">
-                        <Col md="6">
-                            <img
+                />
+            </Col>
+
+            <Row className="mt-4">
+                {filteredSnippets.length > 0 ? (
+                    filteredSnippets.map((snippet, index) => (
+                        <Col xs="4" key={snippet.id} className="mb-4">
+                            <Card
                                 style={{
-                                    height: "300px",
-                                    objectFit: "100%",
+                                    maxHeight: "300px"
                                 }}
-                                src={snippet.image || "https://picsum.photos/600/300"}
-                                alt="Card image"
-                                className="img-fluid rounded-4 object-fit-cover"
-                            />
-                        </Col>
-                        <Col md="6">
-                            <CardBody>
-                                <CardSubtitle className="mb-1 text-muted fs-6 fw-light">
-                                    {snippet.programmingLanguage}
-                                </CardSubtitle>
-                                <CardTitle className="fs-5 fw-semibold">
-                                    {snippet.title}
-                                </CardTitle>
-                                <CardText
+                                className="position-relative"
+                                onMouseEnter={() => setHoveredCard(index)}
+                                onMouseLeave={() => setHoveredCard(null)}
+                                onClick={() => navigate(`/content/${snippet.id}`)}
+                            >
+                                <CardImg
                                     style={{
-                                        display: "-webkit-box",
+                                        height: "200px",
+                                        objectFit: "cover"
+                                    }}
+                                    top
+                                    width="100%"
+                                    src={snippet.image || "https://picsum.photos/400/300"}
+                                    alt="Snippet preview"
+                                />
+                                <CardBody
+                                    className={`position-absolute w-100 h-100 top-0 start-0 bg-dark bg-opacity-75 text-white transition-opacity ${hoveredCard === index ? 'opacity-100' : 'opacity-0'}`}
+                                    style={{ transition: 'opacity 0.3s ease' }}
+                                >
+                                    <CardTitle tag="h4" style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
+                                        {snippet.title || "Untitled Snippet"}
+                                    </CardTitle>
+                                    <CardSubtitle className="mb-2 text-warning">
+                                        {snippet.programmingLanguage || "Unknown Category"}
+                                    </CardSubtitle>
+                                    <CardText style={{
+                                        display: '-webkit-box',
                                         WebkitLineClamp: 2,
-                                        WebkitBoxOrient: "vertical",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                    }}
-                                    className="text-muted fs-6 fw-light"
-                                >
-                                    {snippet.description}
-                                </CardText>
-                                <Button
-                                    className={`bg-light border-0 fs-6 fw-light rounded-pill ${likedSnippets[snippet.id] ? "text-danger" : "text-dark"
-                                        }`}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleLike(snippet.id);
-                                    }}
-                                >
-                                    {likedSnippets[snippet.id] ? <FaHeart /> : <FaRegHeart />}{" "}
-                                    Like
-                                </Button>
-                            </CardBody>
+                                        WebkitBoxOrient: 'vertical',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis'
+                                    }}>
+                                        {snippet.description || "No description provided..."}
+                                    </CardText>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <small>@{snippet.author || "Unknown"}</small>
+                                        <small>{snippet.createdAt || "N/A"}</small>
+                                    </div>
+
+                                    {/* Like Button */}
+                                    <Button
+                                        className={`mt-2 bg-transparent border-2 rounded-5 text-white ${likedSnippets[snippet.id] ? 'text-danger' : 'text-dark'}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleLike(snippet.id);
+                                        }}
+                                    >
+                                        {likedSnippets[snippet.id] ? <FaHeart /> : <FaRegHeart />} Like
+                                    </Button>
+                                </CardBody>
+                            </Card>
                         </Col>
-                    </Row>
-                </Card>
-            ))}
-        </>
+                    ))
+                ) : (
+                    <Col xs="12">
+                        <p className="text-center text-muted">No results found for "{searchQuery}".</p>
+                    </Col>
+                )}
+            </Row>
+        </Row>
     );
 };
 
