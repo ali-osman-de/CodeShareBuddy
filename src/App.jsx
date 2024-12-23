@@ -10,6 +10,7 @@ import ExplorePage from "./pages/ExplorePage";
 import ContentPage from "./pages/ContentPage";
 import CreateProjectPage from "./pages/CreateProjectPage";
 import PrivateRoute from "./PrivateRoute";
+import NotificationPage from "./pages/NotificationPage";
 
 const App = () => {
   return (
@@ -48,6 +49,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <ExplorePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <PrivateRoute>
+                <NotificationPage />
               </PrivateRoute>
             }
           />
