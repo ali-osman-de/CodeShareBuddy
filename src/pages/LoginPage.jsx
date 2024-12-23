@@ -8,16 +8,15 @@ import SignUp from '../components/LoginPageComponents/SignUp';
 const LoginPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, expirationTime } = useSelector((state) => state.auth); // Get auth state from Redux store
+  const { isAuthenticated, expirationTime } = useSelector((state) => state.auth); 
 
   const [isSignUp, setIsSignUp] = useState(location.state?.isSignUp || false);
 
-  // Check if there's a valid token and session before rendering the form
   useEffect(() => {
     if (isAuthenticated && expirationTime) {
       const isTokenValid = new Date().getTime() < new Date(expirationTime).getTime();
       if (isTokenValid) {
-        navigate('/profile'); // Redirect to profile if token is valid
+        navigate('/profile'); 
       }
     }
   }, [isAuthenticated, expirationTime, navigate]);

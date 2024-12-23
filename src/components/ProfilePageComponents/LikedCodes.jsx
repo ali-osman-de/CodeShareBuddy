@@ -22,7 +22,7 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
-import { FaHeart } from "react-icons/fa"; // Importing like icon
+import { FaHeart } from "react-icons/fa";
 
 const LikedCodes = () => {
   const navigate = useNavigate();
