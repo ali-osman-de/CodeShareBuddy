@@ -156,7 +156,7 @@ const HomePageContents = () => {
                 <CardText
                   style={{
                     display: '-webkit-box',
-                    WebkitLineClamp: 5,
+                    WebkitLineClamp: 3,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',

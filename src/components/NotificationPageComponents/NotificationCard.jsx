@@ -100,12 +100,34 @@ const NotificationCard = () => {
                     <CardBody>
                         <Row className="align-items-center">
                             <Col xs="auto">
-                                <img
-                                    src={notification.likerProfilePic}
-                                    alt={`${notification.likerName}'nin profili`}
-                                    className="rounded-circle"
-                                    style={{ width: "40px", height: "40px", objectFit: "cover" }}
-                                />
+                                <div
+                                    className="bd-placeholder-img rounded-circle"
+                                    style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        backgroundColor: '#777',
+                                        cursor: 'pointer',
+                                        overflow: 'hidden',
+                                    }}
+                                >
+                                    {notification.likerProfilePic ? (
+                                        <img
+                                            src={notification.likerProfilePic}
+                                            alt={`${notification.likerName}'nin profili`}
+                                            className="rounded-circle"
+                                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                                        />
+                                    ) : (
+                                        <div
+                                            style={{
+                                                width: "40px",
+                                                height: "40px",
+                                                backgroundColor: "#ccc",
+                                                borderRadius: "50%",
+                                            }}
+                                        />
+                                    )}
+                                </div>
                             </Col>
                             <Col>
                                 <span className="fw-bold text-dark">{notification.likerName}</span>

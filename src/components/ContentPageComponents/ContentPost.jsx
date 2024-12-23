@@ -8,8 +8,8 @@ import { Editor } from "@monaco-editor/react";
 const ContentPost = () => {
   const { id } = useParams();
   const [content, setContent] = useState(null);
-  const [author, setAuthor] = useState(null); 
-  const [loading, setLoading] = useState(true); 
+  const [author, setAuthor] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
 
@@ -46,12 +46,14 @@ const ContentPost = () => {
   }, [id]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setOutput(code);
-    }, 500);
+    if (content?.programmingLanguage === "Html") {
+      const timeout = setTimeout(() => {
+        setOutput(code);
+      }, 500);
 
-    return () => clearTimeout(timeout);
-  }, [code]);
+      return () => clearTimeout(timeout);
+    }
+  }, [code, content]);
 
   if (loading) {
     return (
@@ -89,13 +91,20 @@ const ContentPost = () => {
               <p className="fw-none" style={{ lineHeight: "1.5", letterSpacing: "0.03em", fontSize: "103%", fontFamily: "monospace", fontWeight: "bold", textAlign: "justify" }}>
                 {content.description}
               </p>
-              <CardBody className="mt-5 bg-secondary" style={{ borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", overflow: "hidden" }}>
+              <CardBody
+                className="mt-5 bg-secondary"
+                style={{
+                  borderRadius: "10px",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  overflow: "hidden",
+                }}
+              >
                 <Editor
                   className="bg-dark"
                   value={code}
                   height="400px"
-                  language={content.programmingLanguage.toLowerCase()}
-                  defaultValue="// Start writing your code here"
+                  language={content.programmingLanguage}
+                  defaultValue="<!-- Start writing your code here -->"
                   onChange={(newValue) => setCode(newValue)}
                   options={{
                     fontSize: 18,
@@ -111,11 +120,36 @@ const ContentPost = () => {
                   }}
                 />
               </CardBody>
+              {content.programmingLanguage === "Html" && (
+                <CardBody
+                  className="mt-5 bg-light"
+                  style={{
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    overflow: "hidden",
+                  }}
+                >
+                  <h3>HTML Preview</h3>
+                  <iframe
+                    srcDoc={output}
+                    title="output"
+                    sandbox="allow-scripts"
+                    frameBorder="0"
+                    width="100%"
+                    height="400px"
+                    style={{
+                      border: "2px double black",
+                      borderRadius: "10px",
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    }}
+                  />
+                </CardBody>
+              )}
             </CardBody>
             <CardBody className="mb-5">
               <div className="d-flex justify-content-between fs-6 fw-normal">
-                <small>{formatDate(content.createdAt)}</small> 
-                <small>@{author ? author.nickName : "Unknown"}</small> 
+                <small>{formatDate(content.createdAt)}</small>
+                <small>@{author ? author.nickName : "Unknown"}</small>
               </div>
             </CardBody>
           </Card>

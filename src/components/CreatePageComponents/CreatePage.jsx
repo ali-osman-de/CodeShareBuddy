@@ -24,9 +24,8 @@ const CreatePage = () => {
     const [uploading, setUploading] = useState(false);
     const [toast, setToast] = useState({ show: false, success: false, message: "" });
 
-    const languages = ["JavaScript", "Python", "TypeScript", "Java", "C++", "Go"];
+    const languages = ["JavaScript", "Python", "TypeScript", "Java", "C++", "Go", "Html", "C#"];
 
-    // Initial state setup when editing or creating
     useEffect(() => {
         if (location.state && location.state.code) {
             setFormData(location.state.code);
@@ -236,7 +235,7 @@ const CreatePage = () => {
                                 onChange={(value) => setFormData((prevState) => ({ ...prevState, code: value }))}
                                 height="200px"
                                 language={formData.programmingLanguage.toLowerCase()}
-                                defaultValue="// Start writing your code here"
+                                defaultValue="<!-- Start writing your code here -->"
                                 options={{
                                     fontSize: 14,
                                     minimap: { enabled: false },
