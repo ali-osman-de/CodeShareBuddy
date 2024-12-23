@@ -1,8 +1,39 @@
-# React + Vite
+# CodeShareBuddy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CodeShareBuddy, kullanıcıların kod parçacıklarını başkalarıyla paylaşmasına olanak tanıyan bir web uygulamasıdır. Bu proje React ve Vite kullanılarak geliştirilmiştir ve Firebase ile entegre edilmiştir.
 
-Currently, two official plugins are available:
+## Özellikler
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Kullanıcı Kimlik Doğrulama**: Firebase Authentication kullanarak kullanıcılar kayıt olabilir, giriş yapabilir ve çıkış yapabilir.
+- **Kod Parçacığı Oluşturma**: Kimliği doğrulanmış kullanıcılar yeni kod parçacıkları oluşturabilir, başlık, açıklama, kod, programlama dili ve isteğe bağlı olarak bir resim ekleyebilir.
+- **Keşfet ve Ara**: Kullanıcılar başkaları tarafından paylaşılan kod parçacıklarını keşfedebilir ve arayabilir.
+- **Profil Yönetimi**: Kullanıcılar profil bilgilerini görüntüleyebilir ve düzenleyebilir, profil resmi yükleyebilir.
+- **Özel Rotalar**: Belirli sayfalar korumalıdır ve yalnızca kimliği doğrulanmış kullanıcılar tarafından erişilebilir.
+- **Duyarlı Tasarım**: Uygulama, Bootstrap kullanarak duyarlı bir tasarım ve düzen sunar.
+
+## Proje Yapısı
+
+## Canlı Proje
+
+Canlı projeyi görmek için [buraya tıklayın](#).
+
+## Kurulum
+
+Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
+
+1. Depoyu klonlayın:
+   ```sh
+   git clone https://github.com/kullaniciadi/codesharebuddy.git
+   ```
+2. Proje dizinine gidin:
+   ```sh
+   cd codesharebuddy
+   ```
+3. Gerekli bağımlılıkları yükleyin:
+   ```sh
+   npm install
+   ```
+4. Projeyi başlatın:
+   ```sh
+   npm run dev
+   ```
