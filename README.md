@@ -15,7 +15,7 @@ CodeShareBuddy, kullanıcıların kod parçacıklarını başkalarıyla paylaşm
 
 ## Canlı Proje
 
-Canlı projeyi görmek için [buraya tıklayın](www.codesharebuddy.netlify.app).
+Canlı projeyi görmek için [buraya tıklayın](https://www.codesharebuddy.netlify.app).
 
 ## Kurulum
 
