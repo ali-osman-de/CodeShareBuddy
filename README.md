@@ -1,5 +1,5 @@
 # CodeShareBuddy
-Yıldız Teknik Üniversitesi BTO3121 Web Tabanlı Programlama dersi bitirme projesine ait GitHub reposu bulunmaktadır.
+Yıldız Teknik Üniversitesi BTO3121 Web Tabanlı Programlama dersi bitirme projesine ait GitHub reposu bulunmaktadır.<br/>
 CodeShareBuddy, kullanıcıların kod parçacıklarını başkalarıyla paylaşmasına olanak tanıyan bir web uygulamasıdır. Bu proje React ve Vite kullanılarak geliştirilmiştir ve Firebase ile entegre edilmiştir.
 
 ## Özellikler
