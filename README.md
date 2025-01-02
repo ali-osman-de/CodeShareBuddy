@@ -12,8 +12,6 @@ CodeShareBuddy, kullanıcıların kod parçacıklarını başkalarıyla paylaşm
 - **Özel Rotalar**: Belirli sayfalar korumalıdır ve yalnızca kimliği doğrulanmış kullanıcılar tarafından erişilebilir.
 - **Duyarlı Tasarım**: Uygulama, Bootstrap kullanarak duyarlı bir tasarım ve düzen sunar.
 
-## Proje Yapısı
-
 ## Canlı Proje
 
 Canlı projeyi görmek için [buraya tıklayın](https://codesharebuddy.netlify.app/).
