@@ -13,7 +13,7 @@ Yıldız Teknik Üniversitesi BTO3121 Web Tabanlı Programlama dersi bitirme pro
 ## 📌 Projeye Katkıda Bulunanlar / Contributors  
 
 - Osman Suheyl Düzel  
-- Mustafa Mervan  
+- Mustafa Mervan Akbulut
 - Ali Osman Demirkollu  
 
 ---
